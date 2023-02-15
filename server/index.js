@@ -1,5 +1,6 @@
 const app = require("./app");
-const port = 3100;
+const config = require("./config");
+const port = config.port;
 
 const serverResponse = () => {
   console.log(`HTTP DEV server now running on port ${port}!`);
