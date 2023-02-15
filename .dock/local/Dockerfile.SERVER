@@ -1,0 +1,17 @@
+FROM node:18.14-slim
+
+WORKDIR /usr/src
+COPY package*.json ./
+RUN npm ci --omit=peer
+
+ENV PATH /usr/src/node_modules/.bin:$PATH
+WORKDIR /usr/src/app
+
+COPY . .
+# COPY ./scripts/init /usr/local/bin
+
+RUN mkdir node_modules && chmod -R 777 node_modules \
+    && ln -sf /usr/share/zoneinfo/US/Mountain /etc/localtime 
+EXPOSE ${PORT:-3000}
+ENTRYPOINT ["/bin/bash", "-c", "rm -rf node_modules/* && npm run \"$1\"", "script"]
+CMD [ "start" ]

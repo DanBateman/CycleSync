@@ -1,0 +1,16 @@
+FROM node:16-slim
+
+WORKDIR /usr/local
+
+COPY package*.json ./
+RUN npm ci --omit=peer --omit=dev
+
+ENV PATH /usr/local/node_modules/.bin:$PATH
+ENV PUBLIC_URL=${PUBLIC_URL}
+
+WORKDIR /usr/local/app
+COPY . .
+
+RUN mkdir node_modules && chmod -R 777 node_modules
+EXPOSE ${PORT:-3000}
+ENTRYPOINT [ "/bin/bash", "-c", "rm -rf node_modules/* && npm run \"$1\"", "script" ]

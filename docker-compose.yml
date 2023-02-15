@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  mongoDB:
+    image: 'mongo:4.4.19-rc1-focal'
+    ports:
+      - ${DB_PORT:-1521}:1521
+      - ${DB_PORT2:-5500}:5500
+    networks:
+      - app
+  server:
+    build:
+      context: ./server/
+      dockerfile: ../.dock/local/Dockerfile.SERVER
+    image: ${COMPOSE_PROJECT_NAME:?err}_server
+    networks:
+      - app
+  client:
+    build:
+      context: ./client/
+      dockerfile: ../.dock/local/Dockerfile.CLIENT
+    image: ${COMPOSE_PROJECT_NAME:?err}_client
+    networks:
+      - app
+networks:
+  app:
+    attachable: true
