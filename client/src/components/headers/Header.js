@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,11 +18,11 @@ const Header = () => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ mr: 2 }}
+            sx={{ color: "white", mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h5" sx={{ width: "210px" }}>
+          <Typography variant="h5" sx={{ color: "white", width: "210px" }}>
             CYCLE SYNC
           </Typography>
           <Box sx={{ display: "flex", width: "100%" }}>
@@ -51,7 +51,7 @@ const Header = () => {
               Account
             </Typography>
           </Box>
-          <Button color="inherit">Login</Button>
+          <Button sx={{ color: "white" }}>Login</Button>
         </Toolbar>
       </AppBar>
     </Box>

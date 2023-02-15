@@ -3,7 +3,7 @@ import { Paper, Box, Typography } from "@mui/material";
 
 const AccountPage = () => {
   return (
-    <Paper sx={{ width: "fit-content" }}>
+    <Paper sx={{ width: "fit-content", m: "auto" }}>
       <Box sx={{ width: "auto", height: "auto", m: "50px" }}>
         <Typography variant="h1">Account View</Typography>
       </Box>

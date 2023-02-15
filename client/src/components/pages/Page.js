@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 const pageTitle = (title) => `${title} | Cycle Sync`;
 
