@@ -1,0 +1,18 @@
+{
+  "name": "cycle-sync",
+  "version": "1.0.0",
+  "description": "init scripts",
+  "scripts": {
+    "launch": "dotenv -e .conf/${npm_config_env:-local}.env -e .conf/secrets.env  -- docker-compose -f docker-compose.yml -f .dock/${npm_config_profile:-local}/compose.yml up --remove-orphans --force-recreate -d --build",
+    "build": "dotenv -e .conf/${npm_config_env:-local}.env -e .conf/secrets.env  -- docker-compose -f docker-compose.yml -f .dock/${npm_config_profile:-deployed}/compose.yml build --force-rm --pull"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanBateman/CycleSync.git"
+  },
+  "author": "Daniel Bateman",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv-cli": "7.0.0"
+  }
+}
