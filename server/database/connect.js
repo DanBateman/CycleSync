@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-const connect = async () => {
+const connect = () => {
   try {
     const options = {
       useNewUrlParser: true,
     };
 
-    const connection = await mongoose.connect(
+    const connection = mongoose.connect(
       "mongodb://user:pass@127.0.0.1:1512/",
       options
     );
@@ -17,5 +17,5 @@ const connect = async () => {
     console.log(err);
   }
 };
-const conn = connect();
-module.exports = conn;
+const connection = connect();
+module.exports = connection;
