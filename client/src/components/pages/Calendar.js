@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios"; // Will refactor to an api context
 import { Paper, Box, Typography } from "@mui/material";
 import config from "../../config";
+import CalendarContainer from "../calendar/calendarContainer";
 
 const api = axios.create({ baseURL: config.apiURL });
 
@@ -19,9 +20,7 @@ const CalendarPage = () => {
 
   return (
     <Paper sx={{ width: "fit-content", m: "auto" }}>
-      <Box sx={{ width: "auto", height: "auto", m: "50px" }}>
-        <Typography variant="h1">Calendar View</Typography>
-      </Box>
+      <CalendarContainer />
     </Paper>
   );
 };
