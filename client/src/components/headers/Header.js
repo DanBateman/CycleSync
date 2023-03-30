@@ -51,7 +51,16 @@ const Header = () => {
               Account
             </Typography>
           </Box>
-          <Button sx={{ color: "white" }}>Login</Button>
+          {/* <Button sx={{ color: "white" }}>Login</Button> */}
+          <Typography
+            variant="h7"
+            component={Link}
+            to={"/login"}
+            noWrap={true}
+            sx={{ mr: 2, color: "white", width: "75px" }}
+          >
+            LOG IN
+          </Typography>
         </Toolbar>
       </AppBar>
     </Box>
