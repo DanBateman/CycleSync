@@ -17,5 +17,4 @@ const connect = () => {
     console.log(err);
   }
 };
-const connection = connect();
-module.exports = connection;
+module.exports = connect;
