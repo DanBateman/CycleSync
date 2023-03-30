@@ -17,6 +17,7 @@
     "@mui/material": "^5.11.7",
     "@reduxjs/toolkit": "^1.9.2",
     "axios": "^1.3.2",
+    "bcryptjs": "^2.4.3",
     "env-cmd": "^10.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
