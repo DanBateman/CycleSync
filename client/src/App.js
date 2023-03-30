@@ -6,6 +6,7 @@ import HomePage from "./components/pages/Home";
 import CalendarPage from "./components/pages/Calendar";
 import AccountPage from "./components/pages/Account";
 import ThemeWrapper from "./components/ThemeWrapper";
+import LoginPage from "./components/pages/Login";
 
 const makePage = (title, Component) => (props) => (
   <Page title={title}>
@@ -30,6 +31,7 @@ const App = () => {
             path="/account"
             component={makePage("Home", AccountPage)}
           />
+          <Route exact path="/login" component={makePage("Login", LoginPage)} />
         </Switch>
       </div>
     </ThemeWrapper>
