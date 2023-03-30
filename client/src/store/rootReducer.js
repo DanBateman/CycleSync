@@ -1,8 +1,10 @@
-import { combineReducers } from "react-redux";
-import { calendarSlice } from "../components/calendar/calendarSlice";
+import { combineReducers } from "@reduxjs/toolkit";
+import authSlice from "../components/auth/authSlice";
+import calendarSlice from "../components/calendar/calendarSlice";
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   calendar: calendarSlice,
+  auth: authSlice,
 });
 
 export default rootReducer;

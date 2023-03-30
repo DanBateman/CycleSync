@@ -1,3 +1,5 @@
+import { createSlice } from "@reduxjs/toolkit";
+
 const initialState = {
   activities: [],
   meals: [],
@@ -18,5 +20,5 @@ export const calendarSlice = createSlice({
 
 export const getActivities = (state) => state.calendar.activities;
 export const getMeals = (state) => state.calendar.meals;
-export const { setActivities, setMeals } = reportSlice.actions;
+export const { setActivities, setMeals } = calendarSlice.actions;
 export default calendarSlice.reducer;
