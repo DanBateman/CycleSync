@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Will refactor to an api context
 import { Paper, Box, Typography } from "@mui/material";
 import config from "../../config";
 import CalendarContainer from "../calendar/calendarContainer";
-
-const api = axios.create({ baseURL: config.apiURL });
+import api from "../../services/api";
 
 const CalendarPage = () => {
   const [activities, setActivities] = useState(null);
