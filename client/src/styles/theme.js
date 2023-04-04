@@ -17,9 +17,9 @@ export let themeOptions = createTheme({
   spacing: 8,
   fontFamily: "Source Sans Pro",
   typography: {
-    fontFamily: "Source Sans Pro",
+    fontFamily: "Questrial, Roboto, sans-serif",
     button: {
-      fontFamily: "Open Sans",
+      fontFamily: "Questrial, Roboto, sans-serif",
     },
   },
 });
