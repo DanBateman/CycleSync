@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
-const connect = () => {
+const connect = async () => {
   try {
     const options = {
       useNewUrlParser: true,
     };
 
-    const connection = mongoose.connect(
-      "mongodb://user:pass@127.0.0.1:1512/",
+    const connection = await mongoose.connect(
+      "mongodb://user:pass@cycle_sync_mongoDB_1",
       options
     );
     if (connection)
