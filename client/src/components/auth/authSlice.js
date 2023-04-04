@@ -5,7 +5,9 @@ import { compareSync } from "bcryptjs";
 const initialState = {
   token: "",
   user: null,
-  loading: false,
+  loading: "idle",
+  currentReqId: undefined,
+  error: null,
 };
 
 export const loginThunk = createAsyncThunk("auth/login", async (user) => {
@@ -23,13 +25,26 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginThunk.pending, (state) => {
-        state.loading = true;
+      .addCase(loginThunk.pending, (state, action) => {
+        state.loading = "pending";
+        state.currentReqId = action.meta.requestId;
       })
       .addCase(loginThunk.fulfilled, (state, action) => {
         console.log(action);
-        state.loading = false;
-        state.token = action.payload;
+        const { reqId } = action.meta;
+        if (state.loading === "pending" && state.currentReqId === reqId) {
+          state.token = action.payload;
+          state.loading = "idle";
+          state.currentReqId = undefined;
+        }
+      })
+      .addCase(loginThunk.rejected, (state, action) => {
+        const { reqId } = action.meta;
+        if (state.loading === "pending" && state.currentReqId === reqId) {
+          state.loading = "idle";
+          state.error = action.error;
+          state.currentReqId = undefined;
+        }
       });
   },
 });
