@@ -10,10 +10,23 @@ const initialState = {
   error: null,
 };
 
-export const loginThunk = createAsyncThunk("auth/login", async (user) => {
-  const response = await api.post("/user/login", user); // returns user object and token
-  return response.data;
-});
+export const loginThunk = createAsyncThunk(
+  "auth/login",
+  async (user, { getState, requestId }) => {
+    let response;
+    const { currentReqId, loading } = getState().auth;
+    if (loading !== "pending" || requestId !== currentReqId) return;
+    if (user.new == true) {
+      // call sign up endpoint if email exists
+      delete user["new"];
+      response = await api.post("/user/signup", user);
+    } else {
+      response = await api.post("/user/login", user); // returns user object and token
+    }
+    console.log(response.data);
+    return response.data;
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",

@@ -6,7 +6,7 @@ const connect = async () => {
     };
 
     const connection = await mongoose.connect(
-      "mongodb://user:pass@cycle_sync_mongoDB_1",
+      "mongodb://user:pass@mongodb",
       options
     );
     if (connection)

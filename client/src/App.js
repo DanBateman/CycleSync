@@ -1,12 +1,12 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import Page from "./components/pages/Page";
+import Page from "./pages/Page";
 import Header from "./components/headers/Header";
-import HomePage from "./components/pages/Home";
-import CalendarPage from "./components/pages/Calendar";
-import AccountPage from "./components/pages/Account";
+import HomePage from "./pages/Home";
+import CalendarPage from "./pages/Calendar";
+import AccountPage from "./pages/Account";
 import ThemeWrapper from "./components/ThemeWrapper";
-import LoginPage from "./components/pages/Login";
+import LoginPage from "./pages/Login";
 
 const makePage = (title, Component) => (props) => (
   <Page title={title}>

@@ -4,6 +4,7 @@
   "description": "init scripts",
   "scripts": {
     "launch": "dotenv -e .conf/${npm_config_env:-local}.env -e .conf/secrets.env  -- docker-compose -f docker-compose.yml -f .dock/${npm_config_profile:-local}/compose.yml up --remove-orphans --force-recreate -d --build",
+    "launch-home": "dotenv -e .conf/local.env -- docker-compose -f docker-compose.yml -f .dock/local/compose.yml up --remove-orphans --force-recreate -d --build",
     "build": "dotenv -e .conf/${npm_config_env:-local}.env -e .conf/secrets.env  -- docker-compose -f docker-compose.yml -f .dock/${npm_config_profile:-deployed}/compose.yml build --force-rm --pull"
   },
   "repository": {

@@ -31,8 +31,7 @@ const CalendarContainer = (props) => {
       sx={{
         width: "auto",
         height: "auto",
-        m: 10,
-        padding: 3,
+        m: 6,
       }}
     >
       <CalendarHeader />
