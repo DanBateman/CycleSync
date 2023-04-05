@@ -1,6 +1,6 @@
 import React from "react";
-import { useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 import { hashSync } from "bcryptjs";
 import {
   Paper,
@@ -12,6 +12,7 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
+import ToastContext from "../../contexts/toast-context";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,8 +29,10 @@ const LoginPage = () => {
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [login, setLogin] = useState(true);
-  const error = useSelector((state) => state.auth.error);
+  const loginError = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { success, error } = useContext(ToastContext);
 
   const sendLogin = () => {
     let hashedPassword = hashSync(loginPassword, 10);
@@ -40,9 +43,11 @@ const LoginPage = () => {
         pass: hashedPassword,
       })
     );
-    if (!error) {
-      return <Redirect to={"/calendar"} />;
+    if (!loginError) {
+      success("Login Successful!");
+      history.push("/calendar");
     } else {
+      error("Unable to login, please try again.");
     }
   };
 

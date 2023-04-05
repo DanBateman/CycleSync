@@ -1,6 +1,5 @@
 import { Paper, Box } from "@mui/material";
 import React, { useEffect } from "react";
-import CalendarHeader from "./calendarHeader";
 import CalendarRow from "./calendarRow";
 
 const CalendarContainer = (props) => {
@@ -23,7 +22,6 @@ const CalendarContainer = (props) => {
     // let date = new Date(today.getFullYear(), today.getMonth(), item);
 
     resultArray[chunkIndex].push(date);
-
     return resultArray;
   }, []);
   return (
@@ -31,13 +29,10 @@ const CalendarContainer = (props) => {
       sx={{
         width: "auto",
         height: "auto",
-        m: 10,
-        padding: 3,
       }}
     >
-      <CalendarHeader />
       {days.map((el, ind) => {
-        return <CalendarRow key={ind} chunk={el} />;
+        return <CalendarRow key={ind} chunk={el} first={ind == 0} />;
       })}
     </Box>
   );

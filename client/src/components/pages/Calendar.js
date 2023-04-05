@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Box, Typography } from "@mui/material";
-import config from "../../config";
+import { Paper, Box, Divider } from "@mui/material";
 import CalendarContainer from "../calendar/calendarContainer";
+import CellViewer from "../calendarView/cellViewer";
 import api from "../../services/api";
 
 const CalendarPage = () => {
@@ -17,9 +17,25 @@ const CalendarPage = () => {
   }, []);
 
   return (
-    <Paper sx={{ width: "fit-content", m: "auto" }}>
+    <Box
+      sx={{
+        display: "flex",
+        my: 8,
+        alignItems: "center",
+        justifyContent: "space-evenly",
+      }}
+    >
       <CalendarContainer />
-    </Paper>
+      <Divider
+        flexItem
+        orientation="vertical"
+        variant="middle"
+        sx={{ mx: 2 }}
+      />
+      <Paper sx={{ width: "700px", height: "500px" }} elevation={6}>
+        <CellViewer />
+      </Paper>
+    </Box>
   );
 };
 

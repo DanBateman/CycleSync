@@ -5,14 +5,35 @@ import App from "./App";
 import config from "./config";
 import { store } from "./store/store";
 import { Provider } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import ToastContext from "./contexts/toast-context";
+
+import "react-toastify/dist/ReactToastify.min.css";
+
+const toastValues = {
+  dark: toast.dark,
+  default: toast,
+  error: toast.error,
+  info: toast.info,
+  success: toast.success,
+  warning: toast.warning,
+};
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
-    <BrowserRouter basename={config.basePath}>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </BrowserRouter>
+    <ToastContext.Provider value={toastValues}>
+      <ToastContainer
+        containerId="toast-container"
+        position="bottom-left"
+        limit={3}
+        pauseOnFocusLoss={false}
+      />
+      <BrowserRouter basename={config.basePath}>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    </ToastContext.Provider>
   </StrictMode>
 );
