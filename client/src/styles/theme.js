@@ -8,7 +8,13 @@ export let themeOptions = createTheme({
       light: "rgb(77, 129, 166)",
     },
     secondary: {
-      main: "#00947a",
+      main: "#8f61f2",
+    },
+    neutral: {
+      main: "#80ffb3",
+      light: "#80ffb3",
+      contrastText: "#000000",
+      dark: "#80ffb3",
     },
   },
   shape: {
