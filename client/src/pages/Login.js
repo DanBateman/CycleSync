@@ -1,6 +1,6 @@
 import React from "react";
-import { useState, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { useState } from "react";
+import { Redirect, useHistory } from "react-router-dom";
 import { hashSync } from "bcryptjs";
 import {
   Paper,
@@ -12,11 +12,10 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import ToastContext from "../../contexts/toast-context";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useDispatch, useSelector } from "react-redux";
-import { loginThunk } from "../auth/authSlice";
+import { loginThunk } from "../components/auth/authSlice";
 
 const LoginPage = () => {
   const [loginUsername, setLoginUsername] = useState("");
@@ -28,27 +27,44 @@ const LoginPage = () => {
   const [showSignUpPass, setShowSignUpPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [login, setLogin] = useState(true);
-  const loginError = useSelector((state) => state.auth.error);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [login, setLogin] = useState(false);
+  const error = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { success, error } = useContext(ToastContext);
 
   const sendLogin = () => {
-    let hashedPassword = hashSync(loginPassword, 10);
-    console.log(hashedPassword);
+    console.log(error);
     dispatch(
       loginThunk({
-        name: loginUsername,
-        pass: hashedPassword,
+        username: loginUsername,
+        pass: loginPassword,
       })
     );
-    if (!loginError) {
-      success("Login Successful!");
-      history.push("/calendar");
+    if (error == null) {
+      history.push("calendar");
     } else {
-      error("Unable to login, please try again.");
+      console.log("pee");
     }
+  };
+
+  const sendSignUp = () => {
+    if (signUpPassword !== confirmPassword) {
+      console.log("here");
+      setConfirmPasswordError(true);
+      return;
+    }
+    setConfirmPasswordError(false);
+    console.log("Signing up now!");
+    console.log(signUpEmail, signUpPassword, signUpUsername);
+    dispatch(
+      loginThunk({
+        username: signUpUsername,
+        email: signUpEmail,
+        pass: signUpPassword,
+        new: true,
+      })
+    );
   };
 
   return (
@@ -191,6 +207,7 @@ const LoginPage = () => {
                 label={"Password"}
                 type={showSignUpPass ? "text" : "password"}
                 value={signUpPassword}
+                error={confirmPasswordError}
                 onChange={(e) => {
                   setSignUpPassword(e.target.value);
                 }}
@@ -225,10 +242,36 @@ const LoginPage = () => {
               <TextField
                 variant="outlined"
                 label={"Confirm Password"}
-                type="password"
+                type={showSignUpPass ? "text" : "password"}
                 value={confirmPassword}
+                error={confirmPasswordError}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {showSignUpPass ? (
+                        <VisibilityOff
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          onClick={() =>
+                            setShowSignUpPass((current) => !current)
+                          }
+                        />
+                      ) : (
+                        <Visibility
+                          sx={{
+                            cursor: "pointer",
+                          }}
+                          onClick={() =>
+                            setShowSignUpPass((current) => !current)
+                          }
+                        />
+                      )}
+                    </InputAdornment>
+                  ),
                 }}
               />
             </FormControl>
@@ -241,7 +284,9 @@ const LoginPage = () => {
                 my: 1,
               }}
             >
-              <Button variant="contained">Sign Up</Button>
+              <Button variant="contained" onClick={sendSignUp}>
+                Sign Up
+              </Button>
               <Button onClick={() => setLogin((current) => !current)}>
                 {login ? "Sign Up" : "Login"}
               </Button>
