@@ -77,7 +77,7 @@ const CalendarCell = (props) => {
         ...styles,
         ...(menstrualCheck && menstrualStyles),
       }}
-      onClick={() => dispatch(setSelectedDay(props.day))}
+      onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
     >
       {/* {dayLookup[props.day.getDay()]} */}
       <Box>

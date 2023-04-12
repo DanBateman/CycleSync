@@ -13,8 +13,8 @@ const ActivitiesChip = (props) => {
     //   <DirectionsRunRoundedIcon />
     // </IconButton>
     <Chip
-      icon={<DirectionsRunRoundedIcon fontSize="small" sx={{ m: 0, p: 0 }} />}
-      label={"x 2"}
+      // icon={<DirectionsRunRoundedIcon fontSize="small" sx={{ m: 0, p: 0 }} />}
+      label={props.label}
       onClick={(event) => {
         console.log(props.data);
         dispatch(setSelectedActivity(props.data));
