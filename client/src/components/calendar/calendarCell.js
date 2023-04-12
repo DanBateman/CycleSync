@@ -46,6 +46,9 @@ const dayLookup = {
 
 const CalendarCell = (props) => {
   // Props will contain all information to generate
+  let today = new Date();
+  let monthCheck = props.day.getMonth() !== today.getMonth();
+  let todayCheck = props.day.getDate() == today.getDate() && monthCheck;
   const dispatch = useDispatch();
   const lastMenstrualStart = useSelector(
     (state) => state.calendar.lastMenstrualStart
@@ -72,40 +75,53 @@ const CalendarCell = (props) => {
     props.day.getDate() <= new Date(lastMenstrualStart).getDate() + 7;
 
   return (
-    <Box
-      sx={{
-        ...styles,
-        ...(menstrualCheck && menstrualStyles),
-      }}
-      onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
-    >
-      {/* {dayLookup[props.day.getDay()]} */}
-      <Box>
-        {/* <Chip sx={{ zIndex: 2 }} label={props.day.getDate()} /> */}
-        <Typography variant="h6" sx={{ ml: 0.75 }}>
-          {props.day.getDate()}
-        </Typography>
-        <Box
-          sx={{
-            zIndex: 1,
-            background:
-              symptomsToday.length > 0 && phases[symptomsToday[0].flow],
-            height: "2.5px",
-            width: "100%",
-          }}
-        ></Box>
+    <Box>
+      <Box
+        sx={{
+          ...styles,
+          ...(menstrualCheck && menstrualStyles),
+          ...(monthCheck && notMonth),
+        }}
+        onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
+      >
+        {/* {dayLookup[props.day.getDay()]} */}
+        <Box>
+          <Typography
+            variant="h6"
+            align="center"
+            sx={{
+              width: "fit-content",
+              ml: todayCheck ? 0.25 : 0.75,
+              mt: 0.2,
+              ...(todayCheck && border),
+            }}
+          >
+            {props.day.getDate()}
+          </Typography>
+          <Box
+            sx={{
+              zIndex: 1,
+              background:
+                symptomsToday.length > 0 && phases[symptomsToday[0].flow],
+              height: "2.5px",
+              width: "100%",
+            }}
+          ></Box>
+        </Box>
+        <Box sx={{ mx: 0.25 }}>
+          {activitiesToday.map((el, ind) => {
+            return (
+              <ActivityChip key={`act-${ind}`} data={el} label={ind + 1} />
+            );
+          })}
+        </Box>
+        <Box sx={{ mx: 1 }}>
+          {mealsToday.map((el, ind) => {
+            return <MealChip key={`meal-${ind}`} data={el} label={ind + 1} />;
+          })}
+        </Box>
+        <Box></Box>
       </Box>
-      <Box sx={{ mx: 1 }}>
-        {activitiesToday.map((el, ind) => {
-          return <ActivityChip key={`act-${ind}`} data={el} label={ind + 1} />;
-        })}
-      </Box>
-      <Box sx={{ mx: 1 }}>
-        {mealsToday.map((el, ind) => {
-          return <MealChip key={`act-${ind}`} data={el} label={ind + 1} />;
-        })}
-      </Box>
-      <Box></Box>
     </Box>
   );
 };
