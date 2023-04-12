@@ -4,14 +4,14 @@ import { Typography, Chip } from "@mui/material";
 import ActivityChip from "./activityChip";
 import MealChip from "./mealChip";
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedDay } from "./calendarSlice";
+import { setSelectedDay, setSelectedActivity } from "./calendarSlice";
 
 const styles = {
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
-  height: 120,
-  width: 120,
+  height: 100,
+  width: 100,
   m: 0.1,
   borderStyle: "solid",
   borderWidth: "2px",
@@ -26,6 +26,11 @@ const phases = {
   ovulation: "#53c9ed",
   luteal: "#ede353",
   menstruation: "#ed5353",
+};
+
+const notMonth = {
+  zIndex: 10,
+  backgroundColor: "rgba(117, 117, 114, 0.9)",
 };
 
 const flow = {
@@ -57,35 +62,34 @@ const CalendarCell = (props) => {
   const meals = useSelector((state) => state.calendar.meals);
   const symptoms = useSelector((state) => state.calendar.symptoms);
   const activitiesToday = activities.filter(
-    (el) => new Date(el.date).getDate() == props.day.getDate()
+    (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
   );
   const mealsToday = meals.filter(
-    (el) => new Date(el.date).getDate() == props.day.getDate()
+    (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
   );
   const symptomsToday = symptoms.filter(
     (el) => new Date(el.date).getDate() == props.day.getDate()
   );
-  let today = new Date();
 
   let menstrualStyles = {
     background: `linear-gradient(180deg, white 30%, ${flow[2]})`,
   };
 
   let menstrualCheck =
-    props.day.getDate() <= new Date(lastMenstrualStart).getDate() + 7;
+    props.day.getDate() <= new Date(lastMenstrualStart).getDate() + 7 &&
+    !monthCheck;
 
   return (
-    <Box>
+    <Box sx={{ ...(monthCheck && notMonth) }}>
       <Box
         sx={{
           ...styles,
           ...(menstrualCheck && menstrualStyles),
-          ...(monthCheck && notMonth),
         }}
         onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
       >
         {/* {dayLookup[props.day.getDay()]} */}
-        <Box>
+        <Box sx={{ display: "flex" }}>
           <Typography
             variant="h6"
             align="center"
@@ -93,7 +97,6 @@ const CalendarCell = (props) => {
               width: "fit-content",
               ml: todayCheck ? 0.25 : 0.75,
               mt: 0.2,
-              ...(todayCheck && border),
             }}
           >
             {props.day.getDate()}
@@ -107,8 +110,46 @@ const CalendarCell = (props) => {
               width: "100%",
             }}
           ></Box>
+          <Box sx={{ display: "flex" }}>
+            {activitiesToday.length > 0 && (
+              <Box
+                sx={{
+                  height: "20px",
+                  width: "10px",
+                  mt: 0.9,
+                  mr: 0.5,
+                  backgroundColor: "orange",
+                  borderRadius: "20%",
+                  transition: "all .1s ease-in-out",
+                  "&:hover": {
+                    transform: "scale(1.1)",
+                  },
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  dispatch(setSelectedActivity(props.day.getDate()));
+                }}
+              />
+            )}
+            {mealsToday.length > 0 && (
+              <Box
+                sx={{
+                  height: "20px",
+                  width: "10px",
+                  mt: 0.9,
+                  mr: 1,
+                  backgroundColor: "red",
+                  borderRadius: "20%",
+                  transition: "all .1s ease-in-out",
+                  "&:hover": {
+                    transform: "scale(1.1)",
+                  },
+                }}
+              />
+            )}
+          </Box>
         </Box>
-        <Box sx={{ mx: 0.25 }}>
+        {/* <Box sx={{ mx: 0.25 }}>
           {activitiesToday.map((el, ind) => {
             return (
               <ActivityChip key={`act-${ind}`} data={el} label={ind + 1} />
@@ -119,7 +160,7 @@ const CalendarCell = (props) => {
           {mealsToday.map((el, ind) => {
             return <MealChip key={`meal-${ind}`} data={el} label={ind + 1} />;
           })}
-        </Box>
+        </Box> */}
         <Box></Box>
       </Box>
     </Box>

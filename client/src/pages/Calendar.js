@@ -32,7 +32,7 @@ const CalendarPage = () => {
         variant="middle"
         sx={{ mx: 2 }}
       />
-      <Paper sx={{ width: "700px", height: "500px" }} elevation={6}>
+      <Paper sx={{ width: "50%", height: "650px" }} elevation={6}>
         <CellViewer />
       </Paper>
     </Box>

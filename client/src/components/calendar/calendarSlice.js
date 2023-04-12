@@ -2,8 +2,19 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   activities: [
-    { id: 1, date: new Date("April 6, 2023").toDateString(), desc: "Cardio" },
-    { id: 2, date: new Date("April 6, 2023").toDateString(), desc: "Pilates" },
+    {
+      id: 1,
+      date: new Date("April 6, 2023").toDateString(),
+      desc: "Cardio",
+      duration: 20,
+    },
+    {
+      id: 2,
+      date: new Date("April 6, 2023").toDateString(),
+      desc: "Pilates",
+      duration: 30,
+      tags: "cardio,bodyweight,low impact",
+    },
     { id: 3, date: new Date().toDateString(), desc: "Weightlifting" },
   ],
   meals: [
@@ -71,9 +82,12 @@ export const calendarSlice = createSlice({
       state.selectedDay = action.payload;
     },
     setSelectedActivity: (state, action) => {
+      // action.payload is a date object
       state.selectedDay = null;
       state.selectedMeal = null;
-      state.selectedActivity = action.payload;
+      state.selectedActivity = state.activities.filter(
+        (el) => new Date(el.date).getDate() == action.payload
+      );
     },
     setSelectedMeal: (state, action) => {
       state.selectedDay = null;

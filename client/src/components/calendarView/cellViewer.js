@@ -18,7 +18,7 @@ const CellViewer = () => {
     dispatch(updateMeal({ key: objKey, value: event.target.value }));
   };
   return (
-    <Box>
+    <Box sx={{ height: "100%" }}>
       {calendar.selectedDay && <DayView />}
       {calendar.selectedActivity && <ActivityView />}
       {calendar.selectedMeal && (
