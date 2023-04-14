@@ -1,66 +1,99 @@
-import React, { useEffect } from "react";
-import { Box } from "@mui/system";
-import { Typography, Chip } from "@mui/material";
-import ActivityChip from "./activityChip";
-import MealChip from "./mealChip";
-import { useSelector, useDispatch } from "react-redux";
-import { setSelectedDay, setSelectedActivity } from "./calendarSlice";
+import React, { useEffect, useState } from 'react';
+import { Box } from '@mui/system';
+import { Typography, Chip, Modal } from '@mui/material';
+import { useMediaQuery } from 'react-responsive';
+import CellViewer from '../calendarView/cellViewer';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSelectedDay, setSelectedActivity } from './calendarSlice';
+import { FaTint } from 'react-icons/fa';
+import CalendarTab from './calendarTab';
 
 const styles = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-  height: 100,
-  width: 100,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: 80,
+  width: 80,
   m: 0.1,
-  borderStyle: "solid",
-  borderWidth: "2px",
+  borderStyle: 'solid',
+  borderWidth: '2px',
   // transition: "all .1s ease-in-out",
   // "&:hover": {
   //   transform: "scale(1.02)",
   // },
 };
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  width: '60vw',
+  transform: 'translate(-50%, -50%)',
+  bgcolor: 'background.paper',
+  border: '2px solid #31c3a6',
+  boxShadow: '0 0 15px #31c3a650',
+  pt: 4,
+  pb: 7,
+  px: 7,
+  borderRadius: 2,
+  display: 'flex',
+  flexDirection: 'column',
+};
+
 const phases = {
-  follicular: "#c953ed",
-  ovulation: "#53c9ed",
-  luteal: "#ede353",
-  menstruation: "#ed5353",
+  follicular: '#c953ed',
+  ovulation: '#53c9ed',
+  luteal: '#ede353',
+  menstruation: '#ed5353',
 };
 
 const notMonth = {
-  zIndex: 10,
-  backgroundColor: "rgba(117, 117, 114, 0.9)",
+  backgroundColor: 'rgba(117, 117, 114, 0.9)',
 };
 
 const flow = {
-  0: "#f7c6c8",
-  1: "#f5abae",
-  2: "#f58c90",
+  0: '#f7c6c8',
+  1: '#f5abae',
+  2: '#f58c90',
 };
 
 const dayLookup = {
-  0: "Sun",
-  1: "Mon",
-  2: "Tue",
-  3: "Wed",
-  4: "Thur",
-  5: "Fri",
-  6: "Sat",
+  0: 'Sun',
+  1: 'Mon',
+  2: 'Tue',
+  3: 'Wed',
+  4: 'Thur',
+  5: 'Fri',
+  6: 'Sat',
+};
+
+let menstrualStyles = {
+  background: `linear-gradient(180deg, white 30%, ${flow[2]})`,
+};
+
+Date.prototype.addDays = function(days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
 };
 
 const CalendarCell = (props) => {
-  // Props will contain all information to generate
-  let today = new Date();
-  let monthCheck = props.day.getMonth() !== today.getMonth();
-  let todayCheck = props.day.getDate() == today.getDate() && monthCheck;
+  // Redux hooks
   const dispatch = useDispatch();
-  const lastMenstrualStart = useSelector(
-    (state) => state.calendar.lastMenstrualStart
-  );
+  // Seletors
+  const lastMenstrualStart = useSelector((state) => state.calendar.lastMenstrualStart);
   const activities = useSelector((state) => state.calendar.activities);
   const meals = useSelector((state) => state.calendar.meals);
   const symptoms = useSelector((state) => state.calendar.symptoms);
+  // Aditional hooks
+  const isMinWidth = useMediaQuery({ query: '(max-width: 1200px)' });
+  const [open, setOpen] = useState(false);
+  // Component variables
+  let today = new Date();
+  let lastPeriod = new Date(lastMenstrualStart);
+  let nextPeriod = new Date(lastMenstrualStart).addDays(28);
+  let monthCheck = props.day.getMonth() !== today.getMonth();
+  let todayCheck = props.day.getDate() == today.getDate() && monthCheck;
   const activitiesToday = activities.filter(
     (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
   );
@@ -68,16 +101,24 @@ const CalendarCell = (props) => {
     (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
   );
   const symptomsToday = symptoms.filter(
-    (el) => new Date(el.date).getDate() == props.day.getDate()
+    (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
   );
+  let menstrualCheck = props.day.getDate() <= lastPeriod.getDate() + 7 && !monthCheck;
 
-  let menstrualStyles = {
-    background: `linear-gradient(180deg, white 30%, ${flow[2]})`,
+  let nextPeriodCheck =
+    props.day.getDate() == nextPeriod.getDate() && props.day.getMonth() == nextPeriod.getMonth();
+
+  const close = () => {
+    setOpen(false);
   };
 
-  let menstrualCheck =
-    props.day.getDate() <= new Date(lastMenstrualStart).getDate() + 7 &&
-    !monthCheck;
+  const activityOnClick = (e) => {
+    e.stopPropagation();
+    dispatch(setSelectedActivity(props.day.getDate()));
+    if (isMinWidth) {
+      setOpen(true);
+    }
+  };
 
   return (
     <Box sx={{ ...(monthCheck && notMonth) }}>
@@ -88,13 +129,12 @@ const CalendarCell = (props) => {
         }}
         onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
       >
-        {/* {dayLookup[props.day.getDay()]} */}
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: 'flex' }}>
           <Typography
             variant="h6"
             align="center"
             sx={{
-              width: "fit-content",
+              width: 'fit-content',
               ml: todayCheck ? 0.25 : 0.75,
               mt: 0.2,
             }}
@@ -104,65 +144,28 @@ const CalendarCell = (props) => {
           <Box
             sx={{
               zIndex: 1,
-              background:
-                symptomsToday.length > 0 && phases[symptomsToday[0].flow],
-              height: "2.5px",
-              width: "100%",
+              background: symptomsToday.length > 0 && phases[symptomsToday[0].flow],
+              height: '2.5px',
+              width: '100%',
             }}
           ></Box>
-          <Box sx={{ display: "flex" }}>
+          <Box sx={{ display: 'flex', mr: 0.5 }}>
             {activitiesToday.length > 0 && (
-              <Box
-                sx={{
-                  height: "20px",
-                  width: "10px",
-                  mt: 0.9,
-                  mr: 0.5,
-                  backgroundColor: "orange",
-                  borderRadius: "20%",
-                  transition: "all .1s ease-in-out",
-                  "&:hover": {
-                    transform: "scale(1.1)",
-                  },
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  dispatch(setSelectedActivity(props.day.getDate()));
-                }}
-              />
+              <CalendarTab variant="activity" customClick={activityOnClick} />
             )}
-            {mealsToday.length > 0 && (
-              <Box
-                sx={{
-                  height: "20px",
-                  width: "10px",
-                  mt: 0.9,
-                  mr: 1,
-                  backgroundColor: "red",
-                  borderRadius: "20%",
-                  transition: "all .1s ease-in-out",
-                  "&:hover": {
-                    transform: "scale(1.1)",
-                  },
-                }}
-              />
-            )}
+            {mealsToday.length > 0 && <CalendarTab variant="meal" />}
+            {symptomsToday.length > 0 && <CalendarTab variant="symptom" />}
           </Box>
         </Box>
-        {/* <Box sx={{ mx: 0.25 }}>
-          {activitiesToday.map((el, ind) => {
-            return (
-              <ActivityChip key={`act-${ind}`} data={el} label={ind + 1} />
-            );
-          })}
-        </Box>
-        <Box sx={{ mx: 1 }}>
-          {mealsToday.map((el, ind) => {
-            return <MealChip key={`meal-${ind}`} data={el} label={ind + 1} />;
-          })}
-        </Box> */}
-        <Box></Box>
+        <Box>{nextPeriodCheck && <FaTint style={{ marginLeft: '5px' }} color="#fa6b7e" />}</Box>
       </Box>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Box sx={{ ...modalStyle }}>
+          <>
+            <CellViewer close={close} />
+          </>
+        </Box>
+      </Modal>
     </Box>
   );
 };
