@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const meal = new mongoose.Schema({
+const symptom = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   date: String,
   desc: String,
-  ingredients: [String],
+  severity: String,
 });
 
-const Meal = mongoose.model('Meal', meal);
+const Symptom = mongoose.model('Symptom', symptom);
 
-module.exports = Meal;
+module.exports = Symptom;

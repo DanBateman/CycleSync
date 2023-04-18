@@ -1,6 +1,4 @@
-const mongoose = require("mongoose");
-const meal = require("./meal");
-const activity = require("./activity");
+const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
   username: String,
@@ -9,10 +7,8 @@ const schema = new mongoose.Schema({
     unique: true,
   },
   hashedPassword: String,
-  activites: [activity],
-  meals: [meal],
 });
 
-const User = mongoose.model("User", schema);
+const User = mongoose.model('User', schema);
 
 module.exports = User;
