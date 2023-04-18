@@ -57,9 +57,19 @@ const initialState = {
     { id: 9, date: new Date().toDateString(), desc: 'Weightlifting' },
   ],
   meals: [
-    { id: 1, date: new Date('April 6, 2023').toDateString(), desc: 'Pizza' },
-    { id: 2, date: new Date('April 6, 2023').toDateString(), desc: 'Pasta' },
-    { id: 3, date: new Date().toDateString() },
+    {
+      id: 1,
+      date: new Date('April 6, 2023').toDateString(),
+      desc: 'Pizza',
+      tags: ['tomato sauce', 'chesse'],
+    },
+    {
+      id: 2,
+      date: new Date('April 6, 2023').toDateString(),
+      desc: 'Pasta',
+      tags: ['tomato sauce', 'chesse'],
+    },
+    { id: 3, date: new Date().toDateString(), desc: 'Pizza', tags: ['tomato sauce', 'chesse'] },
   ],
   symptoms: [
     {
@@ -99,6 +109,7 @@ const initialState = {
       cramps: 'light',
     },
   ],
+  selectedMonth: new Date().getMonth(),
   selectedDay: null,
   selectedActivity: null,
   selectedMeal: null,
@@ -133,9 +144,15 @@ export const calendarSlice = createSlice({
       );
     },
     setSelectedMeal: (state, action) => {
+      if (action.payload == null) {
+        state.selectedMeal = null;
+        return;
+      }
       state.selectedDay = null;
       state.selectedActivity = null;
-      state.selectedMeal = action.payload;
+      state.selectedMeal = state.meals.filter(
+        (el) => new Date(el.date).getDate() == action.payload
+      );
     },
     saveActivity: (state) => {
       let index;
@@ -173,6 +190,12 @@ export const calendarSlice = createSlice({
         (el) => el != action.payload.tag
       );
     },
+    incrementMonth: (state) => {
+      state.selectedMonth += 1;
+    },
+    decrementMonth: (state) => {
+      state.selectedMonth -= 1;
+    },
   },
 });
 
@@ -191,5 +214,7 @@ export const {
   updateMeal,
   addTag,
   deleteTag,
+  incrementMonth,
+  decrementMonth,
 } = calendarSlice.actions;
 export default calendarSlice.reducer;

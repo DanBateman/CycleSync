@@ -1,10 +1,18 @@
-import { Box, IconButton, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import { Backdrop, Box, CircularProgress, IconButton, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import CalendarRow from './calendarRow';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import { useSelector, useDispatch } from 'react-redux';
+import { incrementMonth, decrementMonth } from '../calendar/calendarSlice';
 
 const CalendarContainer = (props) => {
+  const perChunk = 7;
+  let today = new Date();
+  const dispatch = useDispatch();
+  const mon = useSelector((state) => state.calendar.selectedMonth);
+  const [loading, setLoading] = useState(true);
+  const [days, setDays] = useState([]);
   const month = {
     0: 'January',
     1: 'February',
@@ -19,50 +27,69 @@ const CalendarContainer = (props) => {
     10: 'November',
     11: 'December',
   };
-  const perChunk = 7;
-  let today = new Date();
-  useEffect(() => {}, []);
-  let arr = [...Array(42).keys()];
-  const days = arr.reduce((resultArray, item, index) => {
-    const chunkIndex = Math.floor(index / perChunk);
 
-    if (!resultArray[chunkIndex]) {
-      resultArray[chunkIndex] = []; // start a new chunk
-    }
+  useEffect(() => {
+    console.log(mon);
+    let arr = [...Array(42).keys()];
+    let d = arr.reduce((resultArray, item, index) => {
+      const chunkIndex = Math.floor(index / perChunk);
 
-    let date = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - today.getDay() - 14 + item
-    );
-    // let date = new Date(today.getFullYear(), today.getMonth(), item);
+      if (!resultArray[chunkIndex]) {
+        resultArray[chunkIndex] = []; // start a new chunk
+      }
 
-    resultArray[chunkIndex].push(date);
-    return resultArray;
-  }, []);
+      // First day of the month
+      let beginning = new Date(today.getFullYear(), mon, 1);
+
+      let date = new Date(
+        today.getFullYear(),
+        mon,
+        beginning.getDate() - beginning.getDay() + item
+      );
+      // let date = new Date(today.getFullYear(), today.getMonth(), item);
+
+      resultArray[chunkIndex].push(date);
+      return resultArray;
+    }, []);
+    setLoading(false);
+    setDays(d);
+  }, [mon]);
   return (
     <Box
       sx={{
         width: 'auto',
         height: 'auto',
+        minHeight: '575px',
       }}
     >
       <Box>
         <Box
           sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}
         >
-          <IconButton>
+          <IconButton
+            onClick={() => {
+              setLoading(true);
+              dispatch(decrementMonth());
+            }}
+          >
             <ArrowLeftIcon />
           </IconButton>
-          <Typography variant="h4">{month[today.getMonth()]}</Typography>
-          <IconButton>
+          <Typography variant="h4">{month[mon]}</Typography>
+          <IconButton
+            onClick={() => {
+              setLoading(true);
+              dispatch(incrementMonth());
+            }}
+          >
             <ArrowRightIcon />
           </IconButton>
         </Box>
       </Box>
-      {days.map((el, ind) => {
-        return <CalendarRow key={ind} chunk={el} first={ind == 0} />;
-      })}
+      {loading && <CircularProgress color="inherit" sx={{ m: 'auto' }} />}
+      {!loading &&
+        days.map((el, ind) => {
+          return <CalendarRow key={ind} chunk={el} first={ind == 0} />;
+        })}
     </Box>
   );
 };

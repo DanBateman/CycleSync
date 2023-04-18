@@ -3,12 +3,13 @@ import { Typography, Box, IconButton, Button } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateActivity, saveActivity, setSelectedActivity } from '../calendar/calendarSlice';
-import ActivityCard from './activityCard';
+import Card from './card';
 import ClearIcon from '@mui/icons-material/Clear';
 
-const ActivityView = () => {
-  const activities = useSelector((state) => state.calendar.selectedActivity);
-  const dispatch = useDispatch();
+const View = (props) => {
+  // Props = { label, customClick, cards }
+  //   const activities = useSelector((state) => state.calendar.selectedActivity);
+  //   const dispatch = useDispatch();
   return (
     <Box
       sx={{
@@ -22,9 +23,9 @@ const ActivityView = () => {
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h4" sx={{ m: 0 }}>
-          Activities
+          {props.label}
         </Typography>
-        <IconButton onClick={() => dispatch(setSelectedActivity(null))}>
+        <IconButton onClick={props.customClick}>
           <ClearIcon />
         </IconButton>
       </Box>
@@ -49,8 +50,8 @@ const ActivityView = () => {
           },
         }}
       >
-        {activities.map((el) => (
-          <ActivityCard key={`act-card-${el.id}`} act={el} />
+        {props.cards.map((el) => (
+          <Card key={`card-${el.id}`} act={el} type={props.label} />
         ))}
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}>
@@ -60,4 +61,4 @@ const ActivityView = () => {
   );
 };
 
-export default ActivityView;
+export default View;

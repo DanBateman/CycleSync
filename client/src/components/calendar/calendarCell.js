@@ -4,7 +4,7 @@ import { Typography, Chip, Modal } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
 import CellViewer from '../calendarView/cellViewer';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedDay, setSelectedActivity } from './calendarSlice';
+import { setSelectedMeal, setSelectedActivity, setSelectedDay } from './calendarSlice';
 import { FaTint } from 'react-icons/fa';
 import CalendarTab from './calendarTab';
 
@@ -85,6 +85,7 @@ const CalendarCell = (props) => {
   const activities = useSelector((state) => state.calendar.activities);
   const meals = useSelector((state) => state.calendar.meals);
   const symptoms = useSelector((state) => state.calendar.symptoms);
+  const mon = useSelector((state) => state.calendar.selectedMonth);
   // Aditional hooks
   const isMinWidth = useMediaQuery({ query: '(max-width: 1200px)' });
   const [open, setOpen] = useState(false);
@@ -92,7 +93,7 @@ const CalendarCell = (props) => {
   let today = new Date();
   let lastPeriod = new Date(lastMenstrualStart);
   let nextPeriod = new Date(lastMenstrualStart).addDays(28);
-  let monthCheck = props.day.getMonth() !== today.getMonth();
+  let monthCheck = props.day.getMonth() !== mon;
   let todayCheck = props.day.getDate() == today.getDate() && monthCheck;
   const activitiesToday = activities.filter(
     (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
@@ -115,6 +116,13 @@ const CalendarCell = (props) => {
   const activityOnClick = (e) => {
     e.stopPropagation();
     dispatch(setSelectedActivity(props.day.getDate()));
+    if (isMinWidth) {
+      setOpen(true);
+    }
+  };
+  const mealOnClick = (e) => {
+    e.stopPropagation();
+    dispatch(setSelectedMeal(props.day.getDate()));
     if (isMinWidth) {
       setOpen(true);
     }
@@ -153,7 +161,7 @@ const CalendarCell = (props) => {
             {activitiesToday.length > 0 && (
               <CalendarTab variant="activity" customClick={activityOnClick} />
             )}
-            {mealsToday.length > 0 && <CalendarTab variant="meal" />}
+            {mealsToday.length > 0 && <CalendarTab variant="meal" customClick={mealOnClick} />}
             {symptomsToday.length > 0 && <CalendarTab variant="symptom" />}
           </Box>
         </Box>

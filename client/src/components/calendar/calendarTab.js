@@ -20,7 +20,7 @@ const CalendarTab = (props) => {
       transform: 'scale(1.1)',
     },
   };
-  return <Box sx={{ ...style }} onClick={(e) => props.customClick(e)} />;
+  return <Box sx={{ ...style }} onClick={(e) => props.customClick && props.customClick(e)} />;
 };
 
 export default CalendarTab;
