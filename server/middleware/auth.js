@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config");
 
 const auth = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.headers["x-access-token"];
   try {
     const user = jwt.verify(token, config.jwt);
     req.user = user;

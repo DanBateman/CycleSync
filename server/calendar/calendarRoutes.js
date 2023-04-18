@@ -1,6 +1,9 @@
 const router = require("express").Router();
+const auth = require("../middleware/auth");
+const { getAll } = require("./calendarController");
 
-router.get("/activities", (req, res) => {
+router.get("/data", auth, async (req, res) => {
+  console.log(await getAll(req.body.month, req.user.userId));
   res.status(200).send("Activities endpoint reached");
 });
 

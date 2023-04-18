@@ -1,37 +1,39 @@
-const router = require('express').Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../database/models/user');
+const router = require("express").Router();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../database/models/user");
+const config = require("../config");
 
 //
 
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   let user = await User.findOne({ userName: req.body.userName });
   if (user !== null && bcrypt.compareSync(req.body.pass, user.hashedPassword)) {
-    const token = jwt.sign({ user_id: user._id, email: user.email }, process.env.JWT_TOKEN, {
-      expiresIn: '2h',
-    });
+    const token = jwt.sign(
+      { user_id: user._id, email: user.email },
+      config.jwt,
+      {
+        expiresIn: "2h",
+      }
+    );
     res.status(200).send({ username: user.username, token: token });
   } else {
-    console.log(user);
-    console.log(bcrypt.compareSync(req.body.pass, user.hashedPassword));
-    res.status(500).send('GET FUCKED SIGN UP');
+    res.status(500).send("GET FUCKED SIGN UP");
   }
 });
 
-router.post('/signup', async (req, res) => {
+router.post("/signup", async (req, res) => {
   // req.body = { username, email, hashedPass }
   let check = await User.findOne({ email: req.body.email });
-  console.log(req.body);
   if (check == null) {
     let user = req.body;
     delete Object.assign(user, {
       hashedPassword: bcrypt.hashSync(user.pass, 10),
-    })['pass'];
+    })["pass"];
     let newUser = await User.create(user);
     res.status(201).send(newUser);
   } else {
-    res.status(500).send('Error inserting user');
+    res.status(500).send("Error inserting user");
   }
 });
 

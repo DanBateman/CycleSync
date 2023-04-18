@@ -10,7 +10,6 @@ const MealChip = (props) => {
     <Chip
       label={props.label}
       onClick={(event) => {
-        console.log(props.data);
         dispatch(setSelectedMeal(props.data));
         event.stopPropagation();
       }}

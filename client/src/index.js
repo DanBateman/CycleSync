@@ -3,12 +3,13 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import config from "./config";
-import { store } from "./store/store";
+import { store, persistor } from "./store/store";
 import { Provider } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import ToastContext from "./contexts/toast-context";
 
 import "react-toastify/dist/ReactToastify.min.css";
+import { PersistGate } from "redux-persist/integration/react";
 
 const toastValues = {
   dark: toast.dark,
@@ -31,7 +32,9 @@ root.render(
       />
       <BrowserRouter basename={config.basePath}>
         <Provider store={store}>
-          <App />
+          <PersistGate loading={null} persistor={persistor}>
+            <App />
+          </PersistGate>
         </Provider>
       </BrowserRouter>
     </ToastContext.Provider>

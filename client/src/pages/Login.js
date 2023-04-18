@@ -34,7 +34,6 @@ const LoginPage = () => {
   const history = useHistory();
 
   const sendLogin = () => {
-    console.log(error);
     dispatch(
       loginThunk({
         username: loginUsername,
@@ -44,19 +43,15 @@ const LoginPage = () => {
     if (error == null) {
       history.push("calendar");
     } else {
-      console.log("pee");
     }
   };
 
   const sendSignUp = () => {
     if (signUpPassword !== confirmPassword) {
-      console.log("here");
       setConfirmPasswordError(true);
       return;
     }
     setConfirmPasswordError(false);
-    console.log("Signing up now!");
-    console.log(signUpEmail, signUpPassword, signUpUsername);
     dispatch(
       loginThunk({
         username: signUpUsername,
