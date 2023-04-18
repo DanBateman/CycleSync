@@ -6,8 +6,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useSelector } from 'react-redux';
 
 const Header = () => {
+  const isLoggedIn = useSelector((state) => state.auth.loggedIn);
   return (
     <Box>
       <AppBar position="static">
@@ -50,10 +52,9 @@ const Header = () => {
             variant="h7"
             component={Link}
             to={'/login'}
-            noWrap={true}
-            sx={{ mr: 2, color: 'white', width: '75px' }}
+            sx={{ mr: 2, color: 'white', width: isLoggedIn ? '75px' : '100px' }}
           >
-            LOG IN
+            {isLoggedIn ? 'LOGOUT' : 'LOG IN'}
           </Typography>
         </Toolbar>
       </AppBar>
