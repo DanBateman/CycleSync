@@ -1,7 +1,7 @@
-import React from "react";
-import { useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
-import { hashSync } from "bcryptjs";
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { Redirect, useHistory } from 'react-router-dom';
+import { hashSync } from 'bcryptjs';
 import {
   Paper,
   Box,
@@ -11,24 +11,25 @@ import {
   Button,
   TextField,
   InputAdornment,
-} from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useDispatch, useSelector } from "react-redux";
-import { loginThunk } from "../components/auth/authSlice";
+} from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginThunk } from '../components/auth/authSlice';
 
 const LoginPage = () => {
-  const [loginUsername, setLoginUsername] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPass, setShowLoginPass] = useState(false);
-  const [signUpEmail, setSignUpEmail] = useState("");
-  const [signUpUsername, setSignUpUsername] = useState("");
-  const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpEmail, setSignUpEmail] = useState('');
+  const [signUpUsername, setSignUpUsername] = useState('');
+  const [signUpPassword, setSignUpPassword] = useState('');
   const [showSignUpPass, setShowSignUpPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [login, setLogin] = useState(false);
+  const [isLoggedIn, setLoggedin] = useState(false);
   const error = useSelector((state) => state.auth.error);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -40,10 +41,7 @@ const LoginPage = () => {
         pass: loginPassword,
       })
     );
-    if (error == null) {
-      history.push("calendar");
-    } else {
-    }
+    setLoggedin(true);
   };
 
   const sendSignUp = () => {
@@ -62,40 +60,44 @@ const LoginPage = () => {
     );
   };
 
+  useEffect(() => {
+    if (isLoggedIn && !error) history.push('calendar');
+  }, [isLoggedIn]);
+
   return (
     <Paper
       elevation={8}
       sx={{
-        width: "50%",
-        minWidth: "700px",
-        height: "600px",
-        mx: "auto",
-        my: "200px",
-        display: "flex",
+        width: '50%',
+        minWidth: '700px',
+        height: '600px',
+        mx: 'auto',
+        my: '200px',
+        display: 'flex',
       }}
     >
       <Box
         sx={{
-          width: "49%",
-          backgroundImage: "radial-gradient(circle, white, #FAA)",
+          width: '49%',
+          backgroundImage: 'radial-gradient(circle, white, #FAA)',
         }}
       />
       <Divider orientation="vertical" />
       <Box
         sx={{
-          width: "49%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
+          width: '49%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
         }}
       >
         {login && (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              mx: "15%",
+              display: 'flex',
+              flexDirection: 'column',
+              mx: '15%',
             }}
           >
             <Typography variant="h5" sx={{ mx: 2.7, my: 1 }} align="center">
@@ -104,7 +106,7 @@ const LoginPage = () => {
             <FormControl sx={{ mx: 2, my: 1 }}>
               <TextField
                 variant="outlined"
-                label={"Username"}
+                label={'Username'}
                 value={loginUsername}
                 onChange={(e) => {
                   setLoginUsername(e.target.value);
@@ -114,8 +116,8 @@ const LoginPage = () => {
             <FormControl sx={{ mx: 2, my: 1 }}>
               <TextField
                 variant="outlined"
-                label={"Password"}
-                type={showLoginPass ? "text" : "password"}
+                label={'Password'}
+                type={showLoginPass ? 'text' : 'password'}
                 value={loginPassword}
                 onChange={(e) => {
                   setLoginPassword(e.target.value);
@@ -126,20 +128,16 @@ const LoginPage = () => {
                       {showLoginPass ? (
                         <VisibilityOff
                           sx={{
-                            cursor: "pointer",
+                            cursor: 'pointer',
                           }}
-                          onClick={() =>
-                            setShowLoginPass((current) => !current)
-                          }
+                          onClick={() => setShowLoginPass((current) => !current)}
                         />
                       ) : (
                         <Visibility
                           sx={{
-                            cursor: "pointer",
+                            cursor: 'pointer',
                           }}
-                          onClick={() =>
-                            setShowLoginPass((current) => !current)
-                          }
+                          onClick={() => setShowLoginPass((current) => !current)}
                         />
                       )}
                     </InputAdornment>
@@ -149,9 +147,9 @@ const LoginPage = () => {
             </FormControl>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row-reverse",
-                justifyContent: "space-between",
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                justifyContent: 'space-between',
                 mx: 2,
                 my: 1,
               }}
@@ -160,7 +158,7 @@ const LoginPage = () => {
                 Login
               </Button>
               <Button onClick={() => setLogin((current) => !current)}>
-                {login ? "Sign Up" : "Login"}
+                {login ? 'Sign Up' : 'Login'}
               </Button>
             </Box>
           </Box>
@@ -168,9 +166,9 @@ const LoginPage = () => {
         {!login && (
           <Box
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              mx: "15%",
+              display: 'flex',
+              flexDirection: 'column',
+              mx: '15%',
             }}
           >
             <Typography variant="h5" sx={{ mx: 2.7, my: 2 }} align="center">
@@ -179,7 +177,7 @@ const LoginPage = () => {
             <FormControl sx={{ mx: 2, my: 1 }}>
               <TextField
                 variant="outlined"
-                label={"Email"}
+                label={'Email'}
                 value={signUpEmail}
                 onChange={(e) => {
                   setSignUpEmail(e.target.value);
@@ -189,7 +187,7 @@ const LoginPage = () => {
             <FormControl sx={{ mx: 2, my: 1 }}>
               <TextField
                 variant="outlined"
-                label={"Username"}
+                label={'Username'}
                 value={signUpUsername}
                 onChange={(e) => {
                   setSignUpUsername(e.target.value);
@@ -199,8 +197,8 @@ const LoginPage = () => {
             <FormControl sx={{ mx: 2, my: 1 }}>
               <TextField
                 variant="outlined"
-                label={"Password"}
-                type={showSignUpPass ? "text" : "password"}
+                label={'Password'}
+                type={showSignUpPass ? 'text' : 'password'}
                 value={signUpPassword}
                 error={confirmPasswordError}
                 onChange={(e) => {
@@ -212,20 +210,16 @@ const LoginPage = () => {
                       {showSignUpPass ? (
                         <VisibilityOff
                           sx={{
-                            cursor: "pointer",
+                            cursor: 'pointer',
                           }}
-                          onClick={() =>
-                            setShowSignUpPass((current) => !current)
-                          }
+                          onClick={() => setShowSignUpPass((current) => !current)}
                         />
                       ) : (
                         <Visibility
                           sx={{
-                            cursor: "pointer",
+                            cursor: 'pointer',
                           }}
-                          onClick={() =>
-                            setShowSignUpPass((current) => !current)
-                          }
+                          onClick={() => setShowSignUpPass((current) => !current)}
                         />
                       )}
                     </InputAdornment>
@@ -236,8 +230,8 @@ const LoginPage = () => {
             <FormControl sx={{ mx: 2, my: 1 }}>
               <TextField
                 variant="outlined"
-                label={"Confirm Password"}
-                type={showSignUpPass ? "text" : "password"}
+                label={'Confirm Password'}
+                type={showSignUpPass ? 'text' : 'password'}
                 value={confirmPassword}
                 error={confirmPasswordError}
                 onChange={(e) => {
@@ -249,20 +243,16 @@ const LoginPage = () => {
                       {showSignUpPass ? (
                         <VisibilityOff
                           sx={{
-                            cursor: "pointer",
+                            cursor: 'pointer',
                           }}
-                          onClick={() =>
-                            setShowSignUpPass((current) => !current)
-                          }
+                          onClick={() => setShowSignUpPass((current) => !current)}
                         />
                       ) : (
                         <Visibility
                           sx={{
-                            cursor: "pointer",
+                            cursor: 'pointer',
                           }}
-                          onClick={() =>
-                            setShowSignUpPass((current) => !current)
-                          }
+                          onClick={() => setShowSignUpPass((current) => !current)}
                         />
                       )}
                     </InputAdornment>
@@ -272,9 +262,9 @@ const LoginPage = () => {
             </FormControl>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row-reverse",
-                justifyContent: "space-between",
+                display: 'flex',
+                flexDirection: 'row-reverse',
+                justifyContent: 'space-between',
                 mx: 2,
                 my: 1,
               }}
@@ -283,7 +273,7 @@ const LoginPage = () => {
                 Sign Up
               </Button>
               <Button onClick={() => setLogin((current) => !current)}>
-                {login ? "Sign Up" : "Login"}
+                {login ? 'Sign Up' : 'Login'}
               </Button>
             </Box>
           </Box>

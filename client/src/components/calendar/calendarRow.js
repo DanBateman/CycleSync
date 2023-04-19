@@ -21,7 +21,7 @@ const CalendarRow = (props) => {
                 {days[ind]}
               </Typography>
             )}
-            <CalendarCell day={el} />
+            <CalendarCell day={el} size={props.size} />
           </Box>
         );
       })}

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/system';
 import { Typography, Chip, Modal } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
@@ -21,6 +22,11 @@ const styles = {
   // "&:hover": {
   //   transform: "scale(1.02)",
   // },
+};
+
+const smallCell = {
+  height: 65,
+  width: 65,
 };
 
 const modalStyle = {
@@ -89,22 +95,26 @@ const CalendarCell = (props) => {
   // Aditional hooks
   const isMinWidth = useMediaQuery({ query: '(max-width: 1200px)' });
   const [open, setOpen] = useState(false);
+  const history = useHistory();
   // Component variables
   let today = new Date();
   let lastPeriod = new Date(lastMenstrualStart);
   let nextPeriod = new Date(lastMenstrualStart).addDays(28);
-  let monthCheck = props.day.getMonth() !== mon;
+  let monthCheck = props.day.getMonth() === mon;
   let todayCheck = props.day.getDate() == today.getDate() && monthCheck;
-  const activitiesToday = activities.filter(
-    (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
-  );
-  const mealsToday = meals.filter(
-    (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
-  );
-  const symptomsToday = symptoms.filter(
-    (el) => new Date(el.date).getDate() == props.day.getDate() && !monthCheck
-  );
-  let menstrualCheck = props.day.getDate() <= lastPeriod.getDate() + 7 && !monthCheck;
+  console.log(monthCheck, props.day.toDateString());
+  const activitiesToday = activities.filter((el) => {
+    let date = new Date(el.date);
+    return date.getDate() == props.day.getDate() && date.getMonth() == props.day.getMonth();
+  });
+  const mealsToday = meals.filter((el) => {
+    let date = new Date(el.date);
+    return date.getDate() == props.day.getDate() && date.getMonth() == props.day.getMonth();
+  });
+  const symptomsToday = symptoms.filter((el) => {
+    let date = new Date(el.date);
+    return date.getDate() == props.day.getDate() && date.getMonth() == props.day.getMonth();
+  });
 
   let nextPeriodCheck =
     props.day.getDate() == nextPeriod.getDate() && props.day.getMonth() == nextPeriod.getMonth();
@@ -116,6 +126,7 @@ const CalendarCell = (props) => {
   const activityOnClick = (e) => {
     e.stopPropagation();
     dispatch(setSelectedActivity(props.day.getDate()));
+    redirect();
     if (isMinWidth) {
       setOpen(true);
     }
@@ -123,17 +134,24 @@ const CalendarCell = (props) => {
   const mealOnClick = (e) => {
     e.stopPropagation();
     dispatch(setSelectedMeal(props.day.getDate()));
+    redirect();
     if (isMinWidth) {
       setOpen(true);
     }
   };
 
+  const redirect = () => {
+    if (props.size == 'small') {
+      history.push('/calendar');
+    }
+  };
+
   return (
-    <Box sx={{ ...(monthCheck && notMonth) }}>
+    <Box sx={{ ...(!monthCheck && notMonth) }}>
       <Box
         sx={{
           ...styles,
-          ...(menstrualCheck && menstrualStyles),
+          ...(props.size == 'small' && smallCell),
         }}
         onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
       >
