@@ -10,6 +10,7 @@ const View = (props) => {
   // Props = { label, customClick, cards }
   //   const activities = useSelector((state) => state.calendar.selectedActivity);
   //   const dispatch = useDispatch();
+
   return (
     <Box
       sx={{
@@ -51,7 +52,7 @@ const View = (props) => {
         }}
       >
         {props.cards.map((el) => (
-          <Card key={`card-${el.id}`} act={el} type={props.label} />
+          <Card key={`card-${el._id}`} act={el} type={props.label} />
         ))}
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}>

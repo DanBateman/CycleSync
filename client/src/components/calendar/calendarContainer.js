@@ -1,18 +1,12 @@
-import {
-  Box,
-  CircularProgress,
-  IconButton,
-  Typography,
-  Button,
-} from "@mui/material";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import React, { useEffect, useState } from "react";
-import CalendarRow from "./calendarRow";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import { useSelector, useDispatch } from "react-redux";
-import { incrementMonth, decrementMonth } from "../calendar/calendarSlice";
-import api from "../../services/api";
+import { Box, CircularProgress, IconButton, Typography, Button } from '@mui/material';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import React, { useEffect, useState } from 'react';
+import CalendarRow from './calendarRow';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import { useSelector, useDispatch } from 'react-redux';
+import { incrementMonth, decrementMonth } from '../calendar/calendarSlice';
+import api from '../../services/api';
 
 const CalendarContainer = (props) => {
   const perChunk = 7;
@@ -22,24 +16,24 @@ const CalendarContainer = (props) => {
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState([]);
   const month = {
-    0: "January",
-    1: "February",
-    2: "March",
-    3: "April",
-    4: "May",
-    5: "June",
-    6: "July",
-    7: "August",
-    8: "September",
-    9: "October",
-    10: "November",
-    11: "December",
+    0: 'January',
+    1: 'February',
+    2: 'March',
+    3: 'April',
+    4: 'May',
+    5: 'June',
+    6: 'July',
+    7: 'August',
+    8: 'September',
+    9: 'October',
+    10: 'November',
+    11: 'December',
   };
 
   const variant = {
-    symptom: "#fcef83", //#ffef73
-    activity: "#d1a8e3", //#ca84e8
-    meal: "#a3e6a4", //#84e89d
+    symptom: '#fcef83', //#ffef73
+    activity: '#d1a8e3', //#ca84e8
+    meal: '#a3e6a4', //#84e89d
   };
 
   useEffect(() => {
@@ -70,17 +64,17 @@ const CalendarContainer = (props) => {
   return (
     <Box
       sx={{
-        width: "auto",
-        height: "auto",
-        minHeight: "575px",
+        width: 'auto',
+        height: 'auto',
+        minHeight: '575px',
       }}
     >
       <Box>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             mb: 0.5,
           }}
         >
@@ -103,19 +97,22 @@ const CalendarContainer = (props) => {
           </IconButton>
         </Box>
       </Box>
-      {loading && <CircularProgress color="inherit" sx={{ m: "auto" }} />}
+      {loading && <CircularProgress color="inherit" sx={{ m: 'auto' }} />}
       {!loading &&
         days.map((el, ind) => {
           return <CalendarRow key={ind} chunk={el} first={ind == 0} />;
         })}
-      <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
         <IconButton>
+          <Typography>meal</Typography>
           <AddCircleIcon sx={{ color: variant.meal }}></AddCircleIcon>
         </IconButton>
         <IconButton>
+          <Typography>activity</Typography>
           <AddCircleIcon sx={{ color: variant.activity }}></AddCircleIcon>
         </IconButton>
         <IconButton>
+          <Typography>symptom</Typography>
           <AddCircleIcon sx={{ color: variant.symptom }}></AddCircleIcon>
         </IconButton>
       </Box>

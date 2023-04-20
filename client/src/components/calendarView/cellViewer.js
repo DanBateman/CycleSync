@@ -32,7 +32,7 @@ const CellViewer = () => {
       {selectedActivity && (
         <View label={'Activities'} customClick={activityOnClick} cards={selectedActivity} />
       )}
-      {selectedMeal && <View label={'Meals'} customCLick={mealOnClick} cards={selectedMeal} />}
+      {selectedMeal && <View label={'Meals'} customClick={mealOnClick} cards={selectedMeal} />}
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   activities: [],
@@ -8,11 +8,11 @@ const initialState = {
   selectedDay: null,
   selectedActivity: null,
   selectedMeal: null,
-  lastMenstrualStart: new Date("April, 1, 2023").toDateString(),
+  lastMenstrualStart: new Date('April, 1, 2023').toDateString(),
 };
 
 export const calendarSlice = createSlice({
-  name: "calendar",
+  name: 'calendar',
   initialState,
   reducers: {
     setAll: (state, action) => {
@@ -57,9 +57,7 @@ export const calendarSlice = createSlice({
     saveActivity: (state) => {
       let index;
       if (state.selectedActivity != null) {
-        index = state.activities.findIndex(
-          (el) => el.id == state.selectedActivity.id
-        );
+        index = state.activities.findIndex((el) => el.id == state.selectedActivity.id);
         state.activities[index] = state.selectedActivity;
       }
     },
@@ -67,9 +65,7 @@ export const calendarSlice = createSlice({
       state.selectedActivity[action.payload.key] = action.payload.value;
     },
     deleteActivity: (state, action) => {
-      state.activities = state.activities.filter(
-        (el) => el != action.payload.id
-      );
+      state.activities = state.activities.filter((el) => el._id != action.payload.id);
     },
     saveMeal: (state) => {
       let index;
@@ -80,6 +76,11 @@ export const calendarSlice = createSlice({
     },
     updateMeal: (state, action) => {
       state.selectedMeal[action.payload.key] = action.payload.value;
+    },
+    deleteMeal: (state, action) => {
+      console.log(action.payload);
+      state.meals = state.meals.filter((el) => el._id != action.payload.id);
+      console.log(state.meals);
     },
     addTag: (state, action) => {
       // action.payload { activityId, newTag }
@@ -119,6 +120,7 @@ export const {
   deleteActivity,
   saveMeal,
   updateMeal,
+  deleteMeal,
   addTag,
   deleteTag,
   setMonth,

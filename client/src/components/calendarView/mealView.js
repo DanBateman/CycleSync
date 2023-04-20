@@ -1,9 +1,8 @@
 import React from 'react';
 import { Typography, Box, IconButton, Button } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateActivity, saveActivity, setSelectedActivity } from '../calendar/calendarSlice';
-import ActivityCard from './activityCard';
+import { setSelectedMeal } from '../calendar/calendarSlice';
+import Card from './card';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const ActivityView = () => {
@@ -24,7 +23,7 @@ const ActivityView = () => {
         <Typography variant="h4" sx={{ m: 0 }}>
           Activities
         </Typography>
-        <IconButton onClick={() => dispatch(setSelectedActivity(null))}>
+        <IconButton onClick={() => dispatch(setSelectedMeal(null))}>
           <ClearIcon />
         </IconButton>
       </Box>
@@ -50,7 +49,7 @@ const ActivityView = () => {
         }}
       >
         {activities.map((el) => (
-          <ActivityCard key={`act-card-${el.id}`} act={el} />
+          <Card key={`meal-card-${el.id}`} act={el} />
         ))}
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}>
