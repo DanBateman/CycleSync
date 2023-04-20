@@ -1,0 +1,503 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  App1521Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: mongoDB:1521/tcp on app network
+      FromPort: 1521
+      GroupId:
+        Ref: AppNetwork
+      IpProtocol: TCP
+      ToPort: 1521
+    Type: AWS::EC2::SecurityGroupIngress
+  App5500Ingress:
+    Properties:
+      CidrIp: 0.0.0.0/0
+      Description: mongoDB:5500/tcp on app network
+      FromPort: 5500
+      GroupId:
+        Ref: AppNetwork
+      IpProtocol: TCP
+      ToPort: 5500
+    Type: AWS::EC2::SecurityGroupIngress
+  AppNetwork:
+    Properties:
+      GroupDescription: test Security Group for app network
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.network
+        Value: test_app
+      VpcId: vpc-810162fb
+    Type: AWS::EC2::SecurityGroup
+  AppNetworkIngress:
+    Properties:
+      Description: Allow communication within network app
+      GroupId:
+        Ref: AppNetwork
+      IpProtocol: "-1"
+      SourceSecurityGroupId:
+        Ref: AppNetwork
+    Type: AWS::EC2::SecurityGroupIngress
+  ClientService:
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: AppNetwork
+          Subnets:
+          - subnet-e00c97de
+          - subnet-cdb9e991
+          - subnet-ef451288
+          - subnet-078bd929
+          - subnet-99c9c096
+          - subnet-3b36d176
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - ClientServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.service
+        Value: client
+      TaskDefinition:
+        Ref: ClientTaskDefinition
+    Type: AWS::ECS::Service
+  ClientServiceDiscoveryEntry:
+    Properties:
+      Description: '"client" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: client
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  ClientTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - test.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: test
+        Name: Client_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Client_ResolvConf_InitContainer
+        Essential: true
+        Image: 783533502506.dkr.ecr.us-east-1.amazonaws.com/db-cycle-sync:latest@sha256:6fad677d0871e04abe33cf83b4a3cb36ddf80722b1aca4be5905f1b3e627a4a1
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: test
+        Name: client
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: ClientTaskExecutionRole
+      Family: test-client
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  ClientTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.service
+        Value: client
+    Type: AWS::IAM::Role
+  CloudMap:
+    Properties:
+      Description: Service Map for Docker Compose project test
+      Name: test.local
+      Vpc: vpc-810162fb
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+  Cluster:
+    Properties:
+      ClusterName: test
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+    Type: AWS::ECS::Cluster
+  LoadBalancer:
+    Properties:
+      LoadBalancerAttributes:
+      - Key: load_balancing.cross_zone.enabled
+        Value: "true"
+      Scheme: internet-facing
+      Subnets:
+      - subnet-e00c97de
+      - subnet-cdb9e991
+      - subnet-ef451288
+      - subnet-078bd929
+      - subnet-99c9c096
+      - subnet-3b36d176
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      Type: network
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+  LogGroup:
+    Properties:
+      LogGroupName: /docker-compose/test
+    Type: AWS::Logs::LogGroup
+  MongoDBService:
+    DependsOn:
+    - MongoDBTCP1521Listener
+    - MongoDBTCP5500Listener
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      LoadBalancers:
+      - ContainerName: mongoDB
+        ContainerPort: 1521
+        TargetGroupArn:
+          Ref: MongoDBTCP1521TargetGroup
+      - ContainerName: mongoDB
+        ContainerPort: 5500
+        TargetGroupArn:
+          Ref: MongoDBTCP5500TargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: AppNetwork
+          Subnets:
+          - subnet-e00c97de
+          - subnet-cdb9e991
+          - subnet-ef451288
+          - subnet-078bd929
+          - subnet-99c9c096
+          - subnet-3b36d176
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - MongoDBServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.service
+        Value: mongoDB
+      TaskDefinition:
+        Ref: MongoDBTaskDefinition
+    Type: AWS::ECS::Service
+  MongoDBServiceDiscoveryEntry:
+    Properties:
+      Description: '"mongoDB" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: mongoDB
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  MongoDBTCP1521Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: MongoDBTCP1521TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 1521
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  MongoDBTCP1521TargetGroup:
+    Properties:
+      Port: 1521
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      TargetType: ip
+      VpcId: vpc-810162fb
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  MongoDBTCP5500Listener:
+    Properties:
+      DefaultActions:
+      - ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn:
+              Ref: MongoDBTCP5500TargetGroup
+        Type: forward
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 5500
+      Protocol: TCP
+    Type: AWS::ElasticLoadBalancingV2::Listener
+  MongoDBTCP5500TargetGroup:
+    Properties:
+      Port: 5500
+      Protocol: TCP
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      TargetType: ip
+      VpcId: vpc-810162fb
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  MongoDBTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - test.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: test
+        Name: MongoDB_ResolvConf_InitContainer
+      - DependsOn:
+        - Condition: SUCCESS
+          ContainerName: MongoDB_ResolvConf_InitContainer
+        Environment:
+        - Name: MONGO_INITDB_ROOT_PASSWORD
+          Value: pass
+        - Name: MONGO_INITDB_ROOT_USERNAME
+          Value: user
+        Essential: true
+        Image: docker.io/mongodb/mongodb-community-server:6.0-ubi8@sha256:cdb5181ac86df88f36302d595864d982c2a7e23d85be02bbfe526622c5a0db13
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: test
+        Name: mongoDB
+        PortMappings:
+        - ContainerPort: 1521
+          HostPort: 1521
+          Protocol: tcp
+        - ContainerPort: 5500
+          HostPort: 5500
+          Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: MongoDBTaskExecutionRole
+      Family: test-mongoDB
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  MongoDBTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.service
+        Value: mongoDB
+    Type: AWS::IAM::Role
+  ServerService:
+    DependsOn:
+    - MongoDBService
+    Properties:
+      Cluster:
+        Fn::GetAtt:
+        - Cluster
+        - Arn
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+          - Ref: AppNetwork
+          Subnets:
+          - subnet-e00c97de
+          - subnet-cdb9e991
+          - subnet-ef451288
+          - subnet-078bd929
+          - subnet-99c9c096
+          - subnet-3b36d176
+      PlatformVersion: 1.4.0
+      PropagateTags: SERVICE
+      SchedulingStrategy: REPLICA
+      ServiceRegistries:
+      - RegistryArn:
+          Fn::GetAtt:
+          - ServerServiceDiscoveryEntry
+          - Arn
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.service
+        Value: server
+      TaskDefinition:
+        Ref: ServerTaskDefinition
+    Type: AWS::ECS::Service
+  ServerServiceDiscoveryEntry:
+    Properties:
+      Description: '"server" service discovery entry in Cloud Map'
+      DnsConfig:
+        DnsRecords:
+        - TTL: 60
+          Type: A
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: server
+      NamespaceId:
+        Ref: CloudMap
+    Type: AWS::ServiceDiscovery::Service
+  ServerTaskDefinition:
+    Properties:
+      ContainerDefinitions:
+      - Command:
+        - us-east-1.compute.internal
+        - test.local
+        Essential: false
+        Image: docker/ecs-searchdomain-sidecar:1.0
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: test
+        Name: Server_ResolvConf_InitContainer
+      - Command:
+        - /bin/bash
+        - -c
+        - sleep 5; mongosh $CONN_STR --eval "show dbs;"
+        DependsOn:
+        - Condition: SUCCESS
+          ContainerName: Server_ResolvConf_InitContainer
+        Environment:
+        - Name: CONN_STR
+          Value: mongodb://user:pass@mongodb
+        Essential: true
+        Image: 783533502506.dkr.ecr.us-east-1.amazonaws.com/db-cycle-sync:latest-server@sha256:fb28b534d35b2a593c32cf40fcc5cd3ac5ed17b901cd6f27ad632170b8bb18e3
+        LinuxParameters: {}
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: LogGroup
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: test
+        Name: server
+      Cpu: "256"
+      ExecutionRoleArn:
+        Ref: ServerTaskExecutionRole
+      Family: test-server
+      Memory: "512"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+    Type: AWS::ECS::TaskDefinition
+  ServerTaskExecutionRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Condition: {}
+          Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Tags:
+      - Key: com.docker.compose.project
+        Value: test
+      - Key: com.docker.compose.service
+        Value: server
+    Type: AWS::IAM::Role
