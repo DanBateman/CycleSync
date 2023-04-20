@@ -10,7 +10,7 @@ router.post("/login", async (req, res) => {
   let user = await User.findOne({ userName: req.body.userName });
   if (user !== null && bcrypt.compareSync(req.body.pass, user.hashedPassword)) {
     const token = jwt.sign(
-      { user_id: user._id, email: user.email },
+      { userId: user._id, email: user.email },
       config.jwt,
       {
         expiresIn: "2h",

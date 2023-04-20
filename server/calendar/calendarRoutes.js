@@ -3,8 +3,8 @@ const auth = require("../middleware/auth");
 const { getAll } = require("./calendarController");
 
 router.get("/data", auth, async (req, res) => {
-  console.log(await getAll(req.body.month, req.user.userId));
-  res.status(200).send("Activities endpoint reached");
+  let data = await getAll(req.body.month, req.user.userId);
+  res.status(200).send(data);
 });
 
 router.get("/meals", (req, res) => {

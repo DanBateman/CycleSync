@@ -1,24 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { Paper, Box, Divider } from "@mui/material";
+import React, { useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import { Box, Divider } from "@mui/material";
 import { useMediaQuery } from "react-responsive";
 import CalendarContainer from "../components/calendar/calendarContainer";
 import CellViewer from "../components/calendarView/cellViewer";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setAll } from "../components/calendar/calendarSlice";
+import ToastContext from "../contexts/toast-context";
 import api from "../services/api";
 
 const CalendarPage = () => {
+  const { success, error } = useContext(ToastContext);
+  const dispatch = useDispatch();
+  const history = useHistory();
   const calendar = useSelector((state) => state.calendar);
   const token = useSelector((state) => state.auth.token);
   const viewerCheck =
     calendar.selectedDay || calendar.selectedMeal || calendar.selectedActivity;
   const isMinWidth = useMediaQuery({ query: "(max-width: 1200px)" });
-  const [activities, setActivities] = useState(null);
 
   const getActivities = async () => {
-    const { data } = await api.get("/calendar/data", {
-      headers: { "x-access-token": token },
-    });
-    setActivities(data);
+    try {
+      const { data } = await api.get("/calendar/data", {
+        headers: { "x-access-token": token },
+      });
+      dispatch(setAll(data));
+    } catch (e) {
+      error("Please login to continue.");
+    }
   };
 
   useEffect(() => {

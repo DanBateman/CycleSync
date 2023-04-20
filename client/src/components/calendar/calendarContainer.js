@@ -1,16 +1,18 @@
 import {
-  Backdrop,
   Box,
   CircularProgress,
   IconButton,
   Typography,
+  Button,
 } from "@mui/material";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import React, { useEffect, useState } from "react";
 import CalendarRow from "./calendarRow";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import { useSelector, useDispatch } from "react-redux";
 import { incrementMonth, decrementMonth } from "../calendar/calendarSlice";
+import api from "../../services/api";
 
 const CalendarContainer = (props) => {
   const perChunk = 7;
@@ -32,6 +34,12 @@ const CalendarContainer = (props) => {
     9: "October",
     10: "November",
     11: "December",
+  };
+
+  const variant = {
+    symptom: "#fcef83", //#ffef73
+    activity: "#d1a8e3", //#ca84e8
+    meal: "#a3e6a4", //#84e89d
   };
 
   useEffect(() => {
@@ -100,6 +108,17 @@ const CalendarContainer = (props) => {
         days.map((el, ind) => {
           return <CalendarRow key={ind} chunk={el} first={ind == 0} />;
         })}
+      <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+        <IconButton>
+          <AddCircleIcon sx={{ color: variant.meal }}></AddCircleIcon>
+        </IconButton>
+        <IconButton>
+          <AddCircleIcon sx={{ color: variant.activity }}></AddCircleIcon>
+        </IconButton>
+        <IconButton>
+          <AddCircleIcon sx={{ color: variant.symptom }}></AddCircleIcon>
+        </IconButton>
+      </Box>
     </Box>
   );
 };

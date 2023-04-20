@@ -6,6 +6,7 @@ const auth = (req, res, next) => {
   try {
     const user = jwt.verify(token, config.jwt);
     req.user = user;
+    console.log(user);
     next();
   } catch (e) {
     res.clearCookie("token");

@@ -1,130 +1,25 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  activities: [
-    {
-      id: 1,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Cardio',
-      duration: 20,
-    },
-    {
-      id: 2,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Pilates',
-      duration: 30,
-      tags: ['cardio', 'bodyweight', 'low impact'],
-    },
-    {
-      id: 3,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Cardio',
-      duration: 20,
-    },
-    {
-      id: 4,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Pilates',
-      duration: 30,
-      tags: ['cardio', 'bodyweight', 'low impact'],
-    },
-    {
-      id: 5,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Cardio',
-      duration: 20,
-    },
-    {
-      id: 6,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Pilates',
-      duration: 30,
-      tags: ['cardio', 'bodyweight', 'low impact'],
-    },
-    {
-      id: 7,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Cardio',
-      duration: 20,
-    },
-    {
-      id: 8,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Pilates',
-      duration: 30,
-      tags: ['cardio', 'bodyweight', 'low impact'],
-    },
-    { id: 9, date: new Date().toDateString(), desc: 'Weightlifting' },
-  ],
-  meals: [
-    {
-      id: 1,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Pizza',
-      tags: ['tomato sauce', 'chesse'],
-    },
-    {
-      id: 2,
-      date: new Date('April 6, 2023').toDateString(),
-      desc: 'Pasta',
-      tags: ['tomato sauce', 'chesse'],
-    },
-    {
-      id: 3,
-      date: new Date().toDateString(),
-      desc: 'Pizza',
-      tags: ['tomato sauce', 'chesse'],
-    },
-  ],
-  symptoms: [
-    {
-      id: 1,
-      date: new Date('April, 1, 2023').toDateString(),
-      flow: 'light',
-      cramps: 'light',
-    },
-    {
-      id: 1,
-      date: new Date('April, 2, 2023').toDateString(),
-      flow: 'heavy',
-      cramps: 'severe',
-    },
-    {
-      id: 1,
-      date: new Date('April, 3, 2023').toDateString(),
-      flow: 'heavy',
-      cramps: 'heavy',
-    },
-    {
-      id: 1,
-      date: new Date('April, 4, 2023').toDateString(),
-      flow: 'regular',
-      cramps: 'regular',
-    },
-    {
-      id: 1,
-      date: new Date('April, 5, 2023').toDateString(),
-      flow: 'light',
-      cramps: 'regular',
-    },
-    {
-      id: 1,
-      date: new Date('April, 6, 2023').toDateString(),
-      flow: 'light',
-      cramps: 'light',
-    },
-  ],
+  activities: [],
+  meals: [],
+  symptoms: [],
   selectedMonth: new Date().getMonth(),
   selectedDay: null,
   selectedActivity: null,
   selectedMeal: null,
-  lastMenstrualStart: new Date('April, 1, 2023').toDateString(),
+  lastMenstrualStart: new Date("April, 1, 2023").toDateString(),
 };
 
 export const calendarSlice = createSlice({
-  name: 'calendar',
+  name: "calendar",
   initialState,
   reducers: {
+    setAll: (state, action) => {
+      state.activities = action.payload.activity;
+      state.meals = action.payload.meal;
+      state.symptoms = action.payload.symptoms;
+    },
     setActivities: (state, action) => {
       state.activities = action.payload;
     },
@@ -162,7 +57,9 @@ export const calendarSlice = createSlice({
     saveActivity: (state) => {
       let index;
       if (state.selectedActivity != null) {
-        index = state.activities.findIndex((el) => el.id == state.selectedActivity.id);
+        index = state.activities.findIndex(
+          (el) => el.id == state.selectedActivity.id
+        );
         state.activities[index] = state.selectedActivity;
       }
     },
@@ -170,7 +67,9 @@ export const calendarSlice = createSlice({
       state.selectedActivity[action.payload.key] = action.payload.value;
     },
     deleteActivity: (state, action) => {
-      state.activities = state.activities.filter((el) => el != action.payload.id);
+      state.activities = state.activities.filter(
+        (el) => el != action.payload.id
+      );
     },
     saveMeal: (state) => {
       let index;
@@ -209,6 +108,7 @@ export const calendarSlice = createSlice({
 export const getActivities = (state) => state.calendar.activities;
 export const getMeals = (state) => state.calendar.meals;
 export const {
+  setAll,
   setActivities,
   setMeals,
   setSelectedDay,
