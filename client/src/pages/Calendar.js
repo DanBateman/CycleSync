@@ -7,10 +7,11 @@ import CellViewer from "../components/calendarView/cellViewer";
 import { useSelector, useDispatch } from "react-redux";
 import { setAll } from "../components/calendar/calendarSlice";
 import ToastContext from "../contexts/toast-context";
-import api from "../services/api";
+import { ApiContext } from "../contexts/api-context";
 
 const CalendarPage = () => {
   const { success, error } = useContext(ToastContext);
+  const api = useContext(ApiContext);
   const dispatch = useDispatch();
   const history = useHistory();
   const calendar = useSelector((state) => state.calendar);
@@ -19,19 +20,8 @@ const CalendarPage = () => {
     calendar.selectedDay || calendar.selectedMeal || calendar.selectedActivity;
   const isMinWidth = useMediaQuery({ query: "(max-width: 1200px)" });
 
-  const getActivities = async () => {
-    try {
-      const { data } = await api.get("/calendar/data", {
-        headers: { "x-access-token": token },
-      });
-      dispatch(setAll(data));
-    } catch (e) {
-      error("Please login to continue.");
-    }
-  };
-
   useEffect(() => {
-    if (token) getActivities();
+    api.getActivities();
   }, [token]);
 
   return (

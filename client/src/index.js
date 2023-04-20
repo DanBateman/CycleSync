@@ -7,7 +7,7 @@ import { store, persistor } from "./store/store";
 import { Provider } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import ToastContext from "./contexts/toast-context";
-
+import { ApiProvider } from "./contexts/api-context";
 import "react-toastify/dist/ReactToastify.min.css";
 import { PersistGate } from "redux-persist/integration/react";
 
@@ -33,7 +33,9 @@ root.render(
       <BrowserRouter basename={config.basePath}>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <App />
+            <ApiProvider>
+              <App />
+            </ApiProvider>
           </PersistGate>
         </Provider>
       </BrowserRouter>

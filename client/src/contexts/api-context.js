@@ -4,10 +4,10 @@ import { setAll } from "../components/calendar/calendarSlice";
 import api from "../services/api";
 
 export const ApiContext = createContext({});
-const dispatch = useDispatch();
-const token = useSelector((state) => state.auth.token);
 
 export const ApiProvider = (props) => {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
   const getActivities = async () => {
     try {
       const { data } = await api.get("/calendar/data", {
@@ -15,7 +15,7 @@ export const ApiProvider = (props) => {
       });
       dispatch(setAll(data));
     } catch (e) {
-      error("Please login to continue.");
+      console.error(e);
     }
   };
 
