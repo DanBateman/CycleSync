@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts --openssl-legacy-provider build"
   },
   "proxy": "http://server:3100",
   "author": "Daniel Bateman",
