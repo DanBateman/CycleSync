@@ -4,7 +4,6 @@ import Page from './pages/Page';
 import Header from './components/headers/Header';
 import HomePage from './pages/Home';
 import CalendarPage from './pages/Calendar';
-import AccountPage from './pages/Account';
 import ThemeWrapper from './components/ThemeWrapper';
 import LoginPage from './pages/Login';
 import { useSelector } from 'react-redux';
@@ -47,7 +46,6 @@ const makeLogInRequiredRoute = () => {
   return (props) => {
     const { error } = useContext(ToastContext);
     const isLoggedIn = useSelector((state) => state.auth.loggedIn);
-    console.log(isLoggedIn);
 
     useEffect(() => {
       if (!isLoggedIn) {

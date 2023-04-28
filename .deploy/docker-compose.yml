@@ -1,25 +1,26 @@
 version: '3.9'
 services:
-  mongoDB:
-    image: 'mongodb/mongodb-community-server:6.0-ubi8'
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=pass
-    ports:
-      - ${DB_PORT:-1521}:1521
-      - ${DB_PORT2:-5500}:5500
-    networks: 
-      - app
-  server:
-    environment:
-      - CONN_STR=mongodb://user:pass@mongodb
-    command: '/bin/bash -c "sleep 5; mongosh $$CONN_STR --eval \"show dbs;\""'
-    depends_on:
-      - mongoDB
-    networks:
-      - app
+  # mongoDB:
+  #   image: 'mongodb/mongodb-community-server:6.0-ubi8'
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=user
+  #     - MONGO_INITDB_ROOT_PASSWORD=pass
+  #   ports:
+  #     - ${DB_PORT:-1521}:1521
+  #     - ${DB_PORT2:-5500}:5500
+  #   networks: 
+  #     - app
+  # server:
+  #   image: 783533502506.dkr.ecr.us-east-1.amazonaws.com/db-cycle-sync:latest-server
+  #   environment:
+  #     - CONN_STR=mongodb://user:pass@mongodb
+  #   command: '/bin/bash -c "sleep 5; mongosh $$CONN_STR --eval \"show dbs;\""'
+  #   depends_on:
+  #     - mongoDB
+  #   networks:
+  #     - app
   client:
-    image: 783533502506.dkr.ecr.us-east-1.amazonaws.com/db-cycle-sync:latest
+    image: 783533502506.dkr.ecr.us-east-1.amazonaws.com/db-cycle-sync:latest-client
     networks:
       - app
 networks:

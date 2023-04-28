@@ -1,35 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Paper, TextField, Box, IconButton } from '@mui/material';
 import Tags from './activityTag';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useDispatch } from 'react-redux';
-import { deleteActivity, deleteMeal, updateActivity, updateMeal } from '../calendar/calendarSlice';
+import { deleteActivity, deleteMeal } from '../calendar/calendarSlice';
 
 const Card = (props) => {
   const dispatch = useDispatch();
+  const [desc, setDesc] = useState(props.act.desc);
+  const [duration, setDuration] = useState(props.act.duration);
 
-  // switch statement for dispatch functions
-
-  const selectAdd = (type) => {
-    switch (type) {
-      case type == 'Activities':
-        break;
-      case type == 'Meals':
-        break;
-      case type == 'Symptoms':
-        break;
-    }
-  };
+  const save = () => {};
 
   const selectDelete = (type) => {
-    console.log(type);
-    dispatch(deleteMeal({ id: props.act._id }));
     switch (type) {
-      case type == 'Activities':
+      case type === 'Activities':
         return dispatch(deleteActivity({ id: props.act._id }));
-      case type == 'Meals':
-        dispatch(deleteMeal({ id: props.act._id }));
-      case type == 'Symptoms':
+      case type === 'Meals':
+        return dispatch(deleteMeal({ id: props.act._id }));
+      case type === 'Symptoms':
+        break;
+      default:
         break;
     }
   };
@@ -57,7 +48,7 @@ const Card = (props) => {
         key="desc"
         size="large"
         sx={{ mx: 1, my: 1.5, width: '250px' }}
-        value={props.act.desc}
+        value={desc}
       />
       {props.type === 'Activities' && (
         <TextField
@@ -65,10 +56,10 @@ const Card = (props) => {
           label="Duration"
           key="duration"
           sx={{ mx: 1, my: 1.5, width: '250px' }}
-          value={props.act.duration}
+          value={duration}
         />
       )}
-      <Tags tags={props.act.tags} id={props.act.id} />
+      <Tags tags={props.act.tags} type={props.type} />
     </Paper>
   );
 };

@@ -1,19 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Paper, Box, Typography } from "@mui/material";
-import PhaseCard from "../components/blog/phaseCard";
-import PhaseLinks from "../components/blog/phaseLinks";
-import ExerciseCard from "../components/blog/exerciseCard";
+import React, { useState } from 'react';
+import { Paper, Box } from '@mui/material';
+import PhaseCard from '../components/blog/phaseCard';
+import PhaseLinks from '../components/blog/phaseLinks';
 
 const BlogPage = () => {
   const [selection, setSelection] = useState(null);
-  const phases = ["Menstrual", "Luteal", "Ovulation", "Folicular"];
+  const phases = ['Menstrual', 'Luteal', 'Ovulation', 'Folicular'];
 
   const customClick = (type) => setSelection(type);
-
-  useEffect(() => {
-    console.log(selection);
-    console.log(phases);
-  }, [selection]);
 
   return (
     <>
@@ -21,17 +15,13 @@ const BlogPage = () => {
         <Paper
           elevation={6}
           sx={{
-            m: "auto",
+            m: 'auto',
             p: 2,
           }}
         >
-          <Box sx={{ display: "flex", flexWrap: "wrap", maxWidth: "820px" }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', maxWidth: '820px' }}>
             {phases.map((phase) => (
-              <PhaseCard
-                key={`phase-${phase}`}
-                label={phase}
-                handleClick={customClick}
-              />
+              <PhaseCard key={`phase-${phase}`} label={phase} handleClick={customClick} />
             ))}
           </Box>
         </Paper>

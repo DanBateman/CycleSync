@@ -11,5 +11,6 @@ ENV PUBLIC_URL=${PUBLIC_URL}
 WORKDIR /usr/local/app
 COPY . .
 
+RUN mkdir node_modules && chmod -R 777 node_modules
 EXPOSE ${PORT:-3000}
 ENTRYPOINT [ "/bin/bash", "-c", "rm -rf node_modules/* && npm run start", "script" ]
