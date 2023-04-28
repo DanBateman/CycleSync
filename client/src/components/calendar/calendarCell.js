@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+/*eslint no-extend-native: ["error", { "exceptions": ["Date"] }]*/
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Box } from '@mui/system';
-import { Typography, Chip, Modal } from '@mui/material';
+import { Typography, Modal } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
 import CellViewer from '../calendarView/cellViewer';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,10 +19,6 @@ const styles = {
   m: 0.1,
   borderStyle: 'solid',
   borderWidth: '2px',
-  // transition: "all .1s ease-in-out",
-  // "&:hover": {
-  //   transform: "scale(1.02)",
-  // },
 };
 
 const smallCell = {
@@ -63,18 +60,27 @@ const flow = {
   2: '#f58c90',
 };
 
-const dayLookup = {
-  0: 'Sun',
-  1: 'Mon',
-  2: 'Tue',
-  3: 'Wed',
-  4: 'Thur',
-  5: 'Fri',
-  6: 'Sat',
-};
+// const dayLookup = {
+//   0: 'Sun',
+//   1: 'Mon',
+//   2: 'Tue',
+//   3: 'Wed',
+//   4: 'Thur',
+//   5: 'Fri',
+//   6: 'Sat',
+// };
 
 let menstrualStyles = {
   background: `linear-gradient(180deg, white 30%, ${flow[2]})`,
+};
+let ovulationStyles = {
+  background: `linear-gradient(180deg, white 30%, #53c9ed)`,
+};
+let lutealStyles = {
+  background: `linear-gradient(180deg, white 30%, #ede353)`,
+};
+let follicularStyles = {
+  background: `linear-gradient(180deg, white 30%, #53c9ed)`,
 };
 
 Date.prototype.addDays = function(days) {
@@ -98,25 +104,35 @@ const CalendarCell = (props) => {
   const history = useHistory();
   // Component variables
   let today = new Date();
-  let lastPeriod = new Date(lastMenstrualStart);
   let nextPeriod = new Date(lastMenstrualStart).addDays(28);
+  let ovulationDay = new Date(lastMenstrualStart).addDays(14);
   let monthCheck = props.day.getMonth() === mon;
-  let todayCheck = props.day.getDate() == today.getDate() && monthCheck;
+  let todayCheck = props.day.getDate() === today.getDate() && monthCheck;
   const activitiesToday = activities.filter((el) => {
     let date = new Date(el.date);
-    return date.getDate() == props.day.getDate() && date.getMonth() == props.day.getMonth();
+    return date.getDate() === props.day.getDate() && date.getMonth() === props.day.getMonth();
   });
   const mealsToday = meals.filter((el) => {
     let date = new Date(el.date);
-    return date.getDate() == props.day.getDate() && date.getMonth() == props.day.getMonth();
+    return date.getDate() === props.day.getDate() && date.getMonth() === props.day.getMonth();
   });
   const symptomsToday = symptoms.filter((el) => {
     let date = new Date(el.date);
-    return date.getDate() == props.day.getDate() && date.getMonth() == props.day.getMonth();
+    return date.getDate() === props.day.getDate() && date.getMonth() === props.day.getMonth();
   });
 
   let nextPeriodCheck =
-    props.day.getDate() == nextPeriod.getDate() && props.day.getMonth() == nextPeriod.getMonth();
+    props.day.getDate() === nextPeriod.getDate() && props.day.getMonth() === nextPeriod.getMonth();
+
+  let mensesCheck = props.day.getDate() <= new Date(lastMenstrualStart).getDate() + 5 && monthCheck;
+  let ovulationCheck =
+    ovulationDay.getDate() - 4 <= props.day.getDate() &&
+    props.day.getDate() < ovulationDay.getDate() + 1 &&
+    monthCheck;
+  let folicularCheck =
+    ovulationDay.getDate() - 4 <= props.day.getDate() &&
+    props.day.getDate() < ovulationDay.getDate() + 1 &&
+    monthCheck;
 
   const close = () => {
     setOpen(false);
@@ -140,7 +156,7 @@ const CalendarCell = (props) => {
   };
 
   const redirect = () => {
-    if (props.size == 'small') {
+    if (props.size === 'small') {
       history.push('/calendar');
     }
   };
@@ -150,7 +166,10 @@ const CalendarCell = (props) => {
       <Box
         sx={{
           ...styles,
-          ...(props.size == 'small' && smallCell),
+          ...(monthCheck && lutealStyles),
+          ...(mensesCheck && menstrualStyles),
+          ...(ovulationCheck && ovulationStyles),
+          ...(props.size === 'small' && smallCell),
         }}
         onClick={() => dispatch(setSelectedDay(props.day.toDateString()))}
       >

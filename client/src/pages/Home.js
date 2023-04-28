@@ -1,25 +1,19 @@
-import React from 'react';
-import { Paper, Box, Typography } from '@mui/material';
+import React, { useContext, useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
 import Week from '../components/home/week';
-
-const styles = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  height: 80,
-  width: 80,
-  m: 0.1,
-  borderStyle: 'solid',
-  borderWidth: '2px',
-  // transition: "all .1s ease-in-out",
-  // "&:hover": {
-  //   transform: "scale(1.02)",
-  // },
-};
+import { useSelector } from 'react-redux';
+import { ApiContext } from '../contexts/api-context';
 
 const HomePage = () => {
+  const api = useContext(ApiContext);
+  const calendar = useSelector((state) => state.calendar);
   const today = new Date();
   const lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+
+  useEffect(() => {
+    if (!calendar.fetched) api.getAll();
+  }, []);
+
   return (
     <Box
       sx={{

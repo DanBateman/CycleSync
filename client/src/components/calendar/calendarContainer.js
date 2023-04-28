@@ -1,12 +1,11 @@
-import { Box, CircularProgress, IconButton, Typography, Button } from '@mui/material';
+import { Box, CircularProgress, IconButton, Typography } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React, { useEffect, useState } from 'react';
 import CalendarRow from './calendarRow';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementMonth, decrementMonth } from '../calendar/calendarSlice';
-import api from '../../services/api';
+import { incrementMonth, decrementMonth, setSelectedAdd } from '../calendar/calendarSlice';
 
 const CalendarContainer = (props) => {
   const perChunk = 7;
@@ -100,21 +99,27 @@ const CalendarContainer = (props) => {
       {loading && <CircularProgress color="inherit" sx={{ m: 'auto' }} />}
       {!loading &&
         days.map((el, ind) => {
-          return <CalendarRow key={ind} chunk={el} first={ind == 0} />;
+          return <CalendarRow key={ind} chunk={el} first={ind === 0} />;
         })}
       <Box sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-        <IconButton>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography>meal</Typography>
-          <AddCircleIcon sx={{ color: variant.meal }}></AddCircleIcon>
-        </IconButton>
-        <IconButton>
+          <IconButton onClick={() => dispatch(setSelectedAdd('meal'))}>
+            <AddCircleIcon sx={{ color: variant.meal }}></AddCircleIcon>
+          </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography>activity</Typography>
-          <AddCircleIcon sx={{ color: variant.activity }}></AddCircleIcon>
-        </IconButton>
-        <IconButton>
+          <IconButton onClick={() => dispatch(setSelectedAdd('activity'))}>
+            <AddCircleIcon sx={{ color: variant.activity }}></AddCircleIcon>
+          </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Typography>symptom</Typography>
-          <AddCircleIcon sx={{ color: variant.symptom }}></AddCircleIcon>
-        </IconButton>
+          <IconButton onClick={() => dispatch(setSelectedAdd('symptom'))}>
+            <AddCircleIcon sx={{ color: variant.symptom }}></AddCircleIcon>
+          </IconButton>
+        </Box>
       </Box>
     </Box>
   );

@@ -1,16 +1,9 @@
 import React from 'react';
 import { Typography, Box, IconButton, Button } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateActivity, saveActivity, setSelectedActivity } from '../calendar/calendarSlice';
 import Card from './card';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const View = (props) => {
-  // Props = { label, customClick, cards }
-  //   const activities = useSelector((state) => state.calendar.selectedActivity);
-  //   const dispatch = useDispatch();
-
   return (
     <Box
       sx={{
@@ -55,9 +48,7 @@ const View = (props) => {
           <Card key={`card-${el._id}`} act={el} type={props.label} />
         ))}
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}>
-        <Button variant="contained">Save</Button>
-      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'row-reverse' }}></Box>
     </Box>
   );
 };

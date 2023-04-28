@@ -1,26 +1,24 @@
 import React, { useEffect, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
 import { Box, Divider } from '@mui/material';
 import { useMediaQuery } from 'react-responsive';
 import CalendarContainer from '../components/calendar/calendarContainer';
 import CellViewer from '../components/calendarView/cellViewer';
-import { useSelector, useDispatch } from 'react-redux';
-import { setAll } from '../components/calendar/calendarSlice';
-import ToastContext from '../contexts/toast-context';
+import { useSelector } from 'react-redux';
 import { ApiContext } from '../contexts/api-context';
+import AddView from '../components/addCard/addView';
 
 const CalendarPage = () => {
-  const { success, error } = useContext(ToastContext);
   const api = useContext(ApiContext);
-  const dispatch = useDispatch();
-  const history = useHistory();
   const calendar = useSelector((state) => state.calendar);
-  const token = useSelector((state) => state.auth.token);
-  const viewerCheck = calendar.selectedDay || calendar.selectedMeal || calendar.selectedActivity;
+  const viewerCheck =
+    calendar.selectedDay ||
+    calendar.selectedMeal ||
+    calendar.selectedAdd ||
+    calendar.selectedActivity;
   const isMinWidth = useMediaQuery({ query: '(max-width: 1200px)' });
 
   useEffect(() => {
-    api.getAll();
+    if (!calendar.fetched) api.getAll();
   }, []);
 
   return (

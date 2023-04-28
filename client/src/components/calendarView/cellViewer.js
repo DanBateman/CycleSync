@@ -1,21 +1,21 @@
-import { Box, TextField, Typography, FormControl, Button } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Box } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  updateActivity,
   setSelectedActivity,
   setSelectedMeal,
-  updateMeal,
-  saveMeal,
+  setSelectedAdd,
+  setSelectedSymptom,
 } from '../calendar/calendarSlice';
-import DayView from './dayView';
-import ActivityView from './activityView';
 import View from './view';
+import AddView from '../addCard/addView';
 
 const CellViewer = () => {
   const dispatch = useDispatch();
   const selectedActivity = useSelector((state) => state.calendar.selectedActivity);
   const selectedMeal = useSelector((state) => state.calendar.selectedMeal);
+  const selectedSymptom = useSelector((state) => state.calendar.selectedSymptom);
+  const selectedAdd = useSelector((state) => state.calendar.selectedAdd);
 
   const activityOnClick = () => {
     dispatch(setSelectedActivity(null));
@@ -23,9 +23,11 @@ const CellViewer = () => {
   const mealOnClick = () => {
     dispatch(setSelectedMeal(null));
   };
-
-  const updateStagedMeal = (event, objKey) => {
-    dispatch(updateMeal({ key: objKey, value: event.target.value }));
+  const symptomOnClick = () => {
+    dispatch(setSelectedSymptom(null));
+  };
+  const addOnClick = () => {
+    dispatch(setSelectedAdd(null));
   };
   return (
     <Box sx={{ display: 'flex', height: '90%', width: '90%', alignItems: 'center' }}>
@@ -33,6 +35,10 @@ const CellViewer = () => {
         <View label={'Activities'} customClick={activityOnClick} cards={selectedActivity} />
       )}
       {selectedMeal && <View label={'Meals'} customClick={mealOnClick} cards={selectedMeal} />}
+      {selectedSymptom && (
+        <View label={'Symptoms'} customClick={symptomOnClick} cards={selectedSymptom} />
+      )}
+      {selectedAdd && <AddView label={'Add new ' + selectedAdd} customClick={addOnClick} />}
     </Box>
   );
 };
