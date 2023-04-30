@@ -120,6 +120,12 @@ const CalendarContainer = (props) => {
             <AddCircleIcon sx={{ color: variant.symptom }}></AddCircleIcon>
           </IconButton>
         </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography>period</Typography>
+          <IconButton onClick={() => dispatch(setSelectedAdd('period'))}>
+            <AddCircleIcon sx={{ color: variant.symptom }}></AddCircleIcon>
+          </IconButton>
+        </Box>
       </Box>
     </Box>
   );

@@ -38,7 +38,12 @@ const CellViewer = () => {
       {selectedSymptom && (
         <View label={'Symptoms'} customClick={symptomOnClick} cards={selectedSymptom} />
       )}
-      {selectedAdd && <AddView label={'Add new ' + selectedAdd} customClick={addOnClick} />}
+      {selectedAdd && (
+        <AddView
+          label={selectedAdd == 'period' ? 'Add period info' : 'Add new ' + selectedAdd}
+          customClick={addOnClick}
+        />
+      )}
     </Box>
   );
 };
