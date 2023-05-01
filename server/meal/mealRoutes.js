@@ -18,7 +18,6 @@ router.get("/:id", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  console.log(req.body);
   let confirm = await addMeal(req.user.userId, req.body);
   res.status(201).send(confirm);
 });
