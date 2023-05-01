@@ -1,24 +1,25 @@
-const Activity = require('../database/models/activity');
+const Activity = require("../database/models/activity");
 
-const getAllActivities = async (userId, month, year) => {
-  const compareDateStart = new Date(year, month);
-  const compareDateEnd = new Date(year, month + 1, 0);
+const getRecent = async (userId, month, year) => {
+  const compareDateStart = new Date(year, month, 0).setHours(0, 0, 0, 0);
+  const compareDateEnd = new Date(year, month + 1, 0).setHours(0, 0, 0, 0);
   const activites = await Activity.find({
     userId: userId,
     date: { $gt: compareDateStart, $lt: compareDateEnd },
   });
+  return activites;
 };
 
 const getActivityById = async (id) => {
-  const activity = await Activity.findById(id);
+  return await Activity.findById(id);
 };
 
 const addActivity = async (userId, activity) => {
   return await Activity.create({ userId: userId, ...activity });
 };
 
-const removeAcivity = async (id) => {
+const removeActivity = async (id) => {
   return await Activity.deleteOne({ _id: id });
 };
 
-module.export = { getAllActivities, getActivityById, addActivity, removeAcivity };
+module.exports = { getRecent, getActivityById, addActivity, removeActivity };

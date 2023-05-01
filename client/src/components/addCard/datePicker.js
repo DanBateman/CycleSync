@@ -11,7 +11,7 @@ const DatePicker = (props) => {
       <DesktopDatePicker
         label="Select Date"
         inputFormat="MM/DD/YYYY"
-        value={props.dateAdapter}
+        value={props.date}
         onChange={props.setDate}
         sx={{ m: 1, width: "250px" }}
         renderInput={(params) => <TextField {...params} />}

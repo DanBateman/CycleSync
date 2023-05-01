@@ -1,26 +1,53 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   activities: [],
   meals: [],
   symptoms: [],
+  menstruation: [],
+  avgCycle: null,
+  avgMenses: null,
+  calcs: {
+    next: null,
+    ov: null,
+    nextPeriodEnd: null,
+  },
   fetched: false,
   selectedMonth: new Date().getMonth(),
   selectedDay: null,
   selectedActivity: null,
   selectedMeal: null,
   selectedAdd: null,
-  lastMenstrualStart: new Date('April, 1, 2023').toDateString(),
+  selectedSymptom: null,
+  selectedMenstruation: null,
+  lastMenstrualStart: null,
 };
 
 export const calendarSlice = createSlice({
-  name: 'calendar',
+  name: "calendar",
   initialState,
   reducers: {
+    reset: (state) => {
+      for (let key in state) {
+        state[key] = initialState[key];
+      }
+    },
     setAll: (state, action) => {
       state.activities = action.payload.activity;
       state.meals = action.payload.meal;
       state.symptoms = action.payload.symptoms;
+      state.menstruation = action.payload.menstruation;
+      state.avgCycle = action.payload.avgCycle;
+      state.avgMenses = action.payload.avgMenses;
+      state.lastMenstrualStart = action.payload.lastPeriod;
+      if (state.lastMenstrualStart) {
+        state.calcs = calculate(
+          state.lastMenstrualStart,
+          state.avgCycle,
+          state.avgMenses
+        );
+      }
+      // state.fetched = true;
     },
     setFetched: (state, action) => {
       state.fetched = action.payload;
@@ -49,9 +76,11 @@ export const calendarSlice = createSlice({
       state.selectedMeal = null;
       state.selectedSymptom = null;
       state.selectedAdd = null;
-      state.stagedEvent = {};
+      state.selectedMenstruation = null;
       state.selectedActivity = state.activities.filter(
-        (el) => new Date(el.date).getDate() === action.payload
+        (el) =>
+          new Date(el.date).getDate() === action.payload &&
+          new Date(el.date).getMonth() === state.selectedMonth
       );
     },
     setSelectedMeal: (state, action) => {
@@ -63,9 +92,11 @@ export const calendarSlice = createSlice({
       state.selectedActivity = null;
       state.selectedSymptom = null;
       state.selectedAdd = null;
-      state.stagedEvent = {};
+      state.selectedMenstruation = null;
       state.selectedMeal = state.meals.filter(
-        (el) => new Date(el.date).getDate() === action.payload
+        (el) =>
+          new Date(el.date).getDate() === action.payload &&
+          new Date(el.date).getMonth() === state.selectedMonth
       );
     },
     setSelectedSymptom: (state, action) => {
@@ -77,7 +108,7 @@ export const calendarSlice = createSlice({
       state.selectedActivity = null;
       state.selectedMeal = null;
       state.selectedAdd = null;
-      state.stagedEvent = {};
+      state.selectedMenstruation = null;
       state.selectedSymptom = state.symptoms.filter(
         (el) => new Date(el.date).getDate() === action.payload
       );
@@ -90,24 +121,33 @@ export const calendarSlice = createSlice({
       state.selectedDay = null;
       state.selectedMeal = null;
       state.selectedActivity = null;
+      state.selectedSymptom = null;
+      state.selectedMenstruation = null;
       state.selectedAdd = action.payload;
-      state.stagedEvent = {};
+    },
+    setSelectedMenstruation: (state, action) => {
+      if (action.payload === null) {
+        state.selectedMenstruation = null;
+        return;
+      }
+      state.selectedDay = null;
+      state.selectedMeal = null;
+      state.selectedActivity = null;
+      state.selectedSymptom = null;
+      state.selectedAdd = null;
+      state.selectedMenstruation = state.menstruation.filter(
+        (el) =>
+          new Date(el.date).getDate() === action.payload &&
+          new Date(el.date).getMonth() === state.selectedMonth
+      );
     },
     saveActivity: (state) => {
       let index;
       if (state.selectedActivity !== null) {
-        index = state.activities.findIndex((el) => el.id === state.selectedActivity.id);
+        index = state.activities.findIndex(
+          (el) => el.id === state.selectedActivity.id
+        );
         state.activities[index] = state.selectedActivity;
-      }
-    },
-    addStaged: (state) => {
-      state.activities.push(state.stagedEvent);
-      state.stagedEvent = {};
-    },
-    updateStagedEvent: (state, action) => {
-      let keys = Object.keys(action.payload);
-      for (let key in keys) {
-        state.stagedEvent[key] = action.payload[key];
       }
     },
     addActivity: (state, action) => {
@@ -117,7 +157,13 @@ export const calendarSlice = createSlice({
       state.selectedActivity[action.payload.key] = action.payload.value;
     },
     deleteActivity: (state, action) => {
-      state.activities = state.activities.filter((el) => el._id !== action.payload.id);
+      let ind = state.selectedActivity.findIndex(
+        (el) => el._id === action.payload.id
+      );
+      state.selectedActivity.splice(ind, 1);
+      ind = state.activities.findIndex((el) => el._id === action.payload.id);
+      state.activities.splice(ind, 1);
+      if (state.selectedActivity.length === 0) state.selectedActivity = null;
     },
     saveMeal: (state) => {
       let index;
@@ -126,11 +172,20 @@ export const calendarSlice = createSlice({
         state.meals[index] = state.selectedMeal;
       }
     },
+    addMeal: (state, action) => {
+      state.meals.push(action.payload);
+    },
     updateMeal: (state, action) => {
       state.selectedMeal[action.payload.key] = action.payload.value;
     },
     deleteMeal: (state, action) => {
-      state.meals = state.meals.filter((el) => el._id !== action.payload.id);
+      let ind = state.selectedMeal.findIndex(
+        (el) => el._id === action.payload.id
+      );
+      state.selectedMeal.splice(ind, 1);
+      ind = state.meals.findIndex((el) => el._id === action.payload.id);
+      state.meals.splice(ind, 1);
+      if (state.selectedMeal.length === 0) state.selectedActivity = null;
     },
     addTag: (state, action) => {
       // action.payload { activityId, newTag }
@@ -144,6 +199,32 @@ export const calendarSlice = createSlice({
         (el) => el !== action.payload.tag
       );
     },
+    addSymptom: (state, action) => {
+      state.symptoms.push(action.payload);
+    },
+    deleteSymptom: (state, action) => {
+      let ind = state.selectedSymptom.findIndex(
+        (el) => el._id === action.payload.id
+      );
+      state.selectedSymptom.splice(ind, 1);
+      ind = state.symptoms.findIndex((el) => el._id === action.payload.id);
+      state.symptoms.splice(ind, 1);
+      if (state.selectedSymptom.length === 0) state.selectedSymptom = null;
+    },
+    addMenstruation: (state, action) => {
+      state.menstruation.push(action.payload);
+      if (action.payload.start) {
+        state.lastMenstrualStart = action.payload.date;
+        calculate(state.lastMenstrualStart, state.avgCycle, state.avgMenses);
+      }
+    },
+    deleteMenstruation: (state, action) => {
+      let ind = state.menstruation.findIndex(
+        (el) => el._id === action.payload.id
+      );
+      state.menstruation.splice(ind, 1);
+      state.selectedMenstruation = null;
+    },
     setMonth: (state, action) => {
       state.selectedMonth = action.payload;
     },
@@ -156,9 +237,25 @@ export const calendarSlice = createSlice({
   },
 });
 
+const calculate = (lastMenstrualDay, avgCycle, avgMenses) => {
+  // last menstrual day is a date, others are numbers (days)
+  let nextPeriod = new Date(lastMenstrualDay).addDays(avgCycle);
+  let ovulationDay = new Date(
+    nextPeriod.getFullYear(),
+    nextPeriod.getMonth(),
+    nextPeriod.getDate - avgCycle / 2
+  );
+  return {
+    next: nextPeriod.toDateString(),
+    ov: ovulationDay.toDateString(),
+    nextPeriodEnd: nextPeriod.addDays(avgMenses).toDateString(),
+  };
+};
+
 export const getActivities = (state) => state.calendar.activities;
 export const getMeals = (state) => state.calendar.meals;
 export const {
+  reset,
   setAll,
   setActivities,
   setMeals,
@@ -167,13 +264,19 @@ export const {
   setSelectedMeal,
   setSelectedSymptom,
   setSelectedAdd,
+  setSelectedMenstruation,
   saveActivity,
   addActivity,
+  addMeal,
+  addSymptom,
+  addMenstruation,
+  deleteSymptom,
+  deleteMenstruation,
+  deleteMeal,
   updateActivity,
   deleteActivity,
   saveMeal,
   updateMeal,
-  deleteMeal,
   addTag,
   deleteTag,
   setMonth,

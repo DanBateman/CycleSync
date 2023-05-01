@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Chip, Typography, TextField, Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import { deleteTag } from '../calendar/calendarSlice';
+import React, { useEffect, useState } from "react";
+import { Box, Chip, Typography, TextField, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { deleteTag } from "../calendar/calendarSlice";
 
 const Tags = (props) => {
   const [tags, setTags] = useState(props.tags ? [...props.tags] : []);
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
 
   const selectTagName = (type) => {
     switch (type) {
-      case type.includes('meal'):
-        return 'Ingredients';
+      case type.includes("meal"):
+        return "Ingredients";
       default:
-        return 'Tags';
+        return "Tags";
     }
   };
 
   const save = () => {
+    if (!props.tags) setTags({});
     props.saveFunc({ tags: tags });
   };
 
@@ -31,25 +32,30 @@ const Tags = (props) => {
     setNewTag(e.target.value);
   };
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', m: 1, width: '250px' }}>
+    <Box
+      sx={{ display: "flex", flexDirection: "column", m: 1, width: "250px" }}
+    >
       <TextField
-        label={`Add ${props.type.includes('eal') ? 'ingredients' : 'tags'}`}
+        label={`Add ${props.type.includes("eal") ? "ingredients" : "tags"}`}
         sx={{ mb: 1 }}
         value={newTag}
         onChange={handleTagChange}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && newTag !== '') {
+          if (e.key === "Enter" && newTag !== "") {
             if (tags.includes(newTag)) return;
             setTags([...tags, newTag]);
-            setNewTag('');
+            setNewTag("");
           }
         }}
       />
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: "flex" }}>
         <Typography sx={{ ml: 1 }}>
-          {props.type.includes('meal') ? 'Ingredients' : 'Tags'}:
+          {props.type.includes("meal") || props.type.includes("Meal")
+            ? "Ingredients"
+            : "Tags"}
+          :
         </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', ml: 0.4 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", ml: 0.4 }}>
           {tags.map((tag, index) => (
             <Chip
               key={index}
@@ -57,15 +63,19 @@ const Tags = (props) => {
               sx={{ mx: 0.1, mb: 0.5 }}
               color="primary"
               label={tag}
-              onDelete={() => handleTagDelete(index)}
+              onDelete={() =>
+                props.type.includes("Add") && handleTagDelete(index)
+              }
             />
           ))}
         </Box>
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row-reverse', mt: 2 }}>
-        <Button variant="contained" onClick={save}>
-          Save
-        </Button>
+      <Box sx={{ display: "flex", flexDirection: "row-reverse", mt: 2 }}>
+        {props.type.includes("Add") && (
+          <Button variant="contained" onClick={save}>
+            {props.type.includes("Add") ? "Add" : "Save"}
+          </Button>
+        )}
       </Box>
     </Box>
   );

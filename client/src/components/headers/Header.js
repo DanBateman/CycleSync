@@ -1,11 +1,12 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import { useSelector, useDispatch } from 'react-redux';
-import { clearUser } from '../auth/authSlice';
+import * as React from "react";
+import { Link } from "react-router-dom";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { useSelector, useDispatch } from "react-redux";
+import { clearUser } from "../auth/authSlice";
+import { reset } from "../calendar/calendarSlice";
 
 const Header = () => {
   const isLoggedIn = useSelector((state) => state.auth.loggedIn);
@@ -13,7 +14,7 @@ const Header = () => {
   return (
     <Box>
       <AppBar position="static">
-        <Toolbar sx={{ display: 'flex' }}>
+        <Toolbar sx={{ display: "flex" }}>
           {/* <IconButton
             size="large"
             edge="start"
@@ -23,20 +24,29 @@ const Header = () => {
           >
             <MenuIcon />
           </IconButton> */}
-          <Typography variant="h5" sx={{ color: 'white', width: '210px' }} noWrap={true}>
+          <Typography
+            variant="h5"
+            sx={{ color: "white", width: "210px" }}
+            noWrap={true}
+          >
             CYCLE SYNC
           </Typography>
-          <Box sx={{ display: 'flex', width: '100%' }}>
+          <Box sx={{ display: "flex", width: "100%" }}>
             {isLoggedIn && (
               <>
-                <Typography variant="h6" component={Link} to={'/'} sx={{ mr: 2, color: 'white' }}>
+                <Typography
+                  variant="h6"
+                  component={Link}
+                  to={"/"}
+                  sx={{ mr: 2, color: "white" }}
+                >
                   Home
                 </Typography>
                 <Typography
                   variant="h6"
                   component={Link}
-                  to={'/calendar'}
-                  sx={{ mr: 2, color: 'white' }}
+                  to={"/calendar"}
+                  sx={{ mr: 2, color: "white" }}
                 >
                   Calendar
                 </Typography>
@@ -51,16 +61,16 @@ const Header = () => {
                 <Typography
                   variant="h6"
                   component={Link}
-                  to={'/stats'}
-                  sx={{ mr: 2, color: 'white' }}
+                  to={"/stats"}
+                  sx={{ mr: 2, color: "white" }}
                 >
                   My Stats
                 </Typography>
                 <Typography
                   variant="h6"
                   component={Link}
-                  to={'/blog'}
-                  sx={{ mr: 2, color: 'white' }}
+                  to={"/blog"}
+                  sx={{ mr: 2, color: "white" }}
                 >
                   Blog
                 </Typography>
@@ -72,9 +82,16 @@ const Header = () => {
             <Typography
               variant="h7"
               component={Link}
-              to={'/login'}
-              sx={{ mr: 2, color: 'white', width: isLoggedIn ? '75px' : '100px' }}
-              onClick={() => dispatch(clearUser())}
+              to={"/login"}
+              sx={{
+                mr: 2,
+                color: "white",
+                width: isLoggedIn ? "75px" : "100px",
+              }}
+              onClick={() => {
+                dispatch(clearUser());
+                dispatch(reset());
+              }}
             >
               LOGOUT
             </Typography>
@@ -82,8 +99,12 @@ const Header = () => {
             <Typography
               variant="h7"
               component={Link}
-              to={'/login'}
-              sx={{ mr: 2, color: 'white', width: isLoggedIn ? '75px' : '100px' }}
+              to={"/login"}
+              sx={{
+                mr: 2,
+                color: "white",
+                width: isLoggedIn ? "75px" : "100px",
+              }}
             >
               LOG IN
             </Typography>

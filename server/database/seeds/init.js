@@ -6,6 +6,8 @@ const user = {
   username: "danielb",
   hashedPassword: bcrypt.hashSync(pass, 10),
   email: "dan@test.io",
+  avgCycle: 28,
+  avgMenses: 5,
 };
 const cards = {
   activities: [
@@ -30,11 +32,10 @@ const cards = {
   meals: [
     { date: new Date("April 6, 2023").toDateString(), desc: "Pizza" },
     { date: new Date("April 6, 2023").toDateString(), desc: "Pasta" },
-    { date: new Date().toDateString() },
   ],
   symptoms: [
     {
-      date: new Date("April, 1, 2023").toDateString(),
+      date: new Date("April 1, 2023").toDateString(),
       desc: "cramps",
       severity: "severe",
     },
