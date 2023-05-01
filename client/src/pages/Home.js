@@ -18,15 +18,19 @@ const HomePage = () => {
     let last = new Date(lastPeriod);
     let day = new Date().getDate() - last.getDate();
     if (day <= 5) {
-      return "MENSES";
+      return <Typography variant="h4">MENSES</Typography>;
     } else if (day > 5 && day <= 10) {
-      return "FOLLICULAR";
+      return <Typography variant="h4">FOLLICULAR</Typography>;
     } else if (day > 10 && day <= 15) {
-      return "OVULATION";
+      return <Typography variant="h4">OVULATION</Typography>;
     } else if (day > 15) {
-      return "LUTEAL";
+      return <Typography variant="h4">LUTEAL</Typography>;
     } else {
-      return "ENTER YOUR LAST PERIOD TO GET STARTED";
+      return (
+        <Typography variant="h6">
+          Add your last period to get started
+        </Typography>
+      );
     }
   };
 
@@ -74,7 +78,7 @@ const HomePage = () => {
           animationFillMode: "forwards",
         }}
       >
-        <Typography variant="h4">{phaseLookup(calendar.lastPeriod)}</Typography>
+        {phaseLookup(calendar.lastMenstrualStart)}
       </Box>
       <Box
         sx={{

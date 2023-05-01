@@ -5,7 +5,7 @@ const getRecent = async (userId, month, year) => {
   const compareDateEnd = new Date(year, month + 1, 0).setHours(0, 0, 0, 0);
   const activites = await Activity.find({
     userId: userId,
-    date: { $gt: compareDateStart, $lt: compareDateEnd },
+    date: { $gte: compareDateStart, $lt: compareDateEnd },
   });
   return activites;
 };

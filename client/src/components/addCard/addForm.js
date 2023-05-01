@@ -51,7 +51,7 @@ const AddForm = (props) => {
       ...(props.type.includes("activit") && { duration: duration }),
       ...data,
     };
-    if (date.isBefore(moment())) {
+    if (date.isBefore(moment() || !props.types.includes("period"))) {
       requestSwitch(props.type, body);
     }
     setDate(moment().set("month", month));

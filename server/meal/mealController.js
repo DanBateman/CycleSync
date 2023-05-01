@@ -5,7 +5,7 @@ const getAllMeals = async (userId, month, year = new Date().getFullYear()) => {
   const compareDateEnd = new Date(year, month + 1, 1);
   const meals = await Meal.find({
     userId: userId,
-    date: { $gt: compareDateStart, $lt: compareDateEnd },
+    date: { $gte: compareDateStart, $lt: compareDateEnd },
   });
   return meals;
 };

@@ -30,7 +30,7 @@ const connect = async () => {
     };
 
     const connection = await mongoose.connect(
-      `mongodb://dbateman:${process.env.DB_PASS}@mongodb`,
+      `mongodb://user:pass@mongodb`,
       options
     );
     if (connection) {

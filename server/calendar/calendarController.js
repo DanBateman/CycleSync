@@ -37,8 +37,8 @@ const getAll = async (month, user_id) => {
     meal: meals,
     symptoms: symps,
     menstruation: mens,
-    avgCycle: user.avgCycle,
-    avgMenses: user.avgMenses,
+    avgCycle: user.avgCycle ? user.avgCycle : 28,
+    avgMenses: user.avgMenses ? user.avgMenses : 5,
     lastPeriod: lastPeriod?.date,
   };
 };
