@@ -7,7 +7,6 @@ const getAllMeals = async (userId, month, year = new Date().getFullYear()) => {
     userId: userId,
     date: { $gt: compareDateStart, $lt: compareDateEnd },
   });
-  console.log(meals, compareDateEnd, compareDateEnd);
   return meals;
 };
 

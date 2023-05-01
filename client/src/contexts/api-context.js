@@ -33,7 +33,6 @@ export const ApiProvider = (props) => {
       const { data } = await api.get(`/calendar/data?month=${month}`, {
         headers: { "x-access-token": token },
       });
-      console.log(data);
       dispatch(setAll(data));
     } catch (e) {
       console.error(e);
@@ -95,7 +94,6 @@ export const ApiProvider = (props) => {
       const { data } = await api.post("/symptoms", symp, {
         headers: { "x-access-token": token },
       });
-      console.log(data);
       dispatch(addSymptom(data));
     } catch (e) {
       console.error(e);

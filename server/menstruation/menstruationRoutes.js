@@ -28,12 +28,10 @@ router.post("/", auth, async (req, res) => {
       ...req.body,
       start: !(lastPeriod || lastFirst),
     });
-    console.log(newMenstruation);
     if (newMenstruation.start) {
       let a = await User.findByIdAndUpdate(req.user.userId, {
         lastPeriod: newMenstruation.date,
       });
-      console.log(a);
     }
 
     res.status(201).send(newMenstruation);
@@ -45,7 +43,6 @@ router.post("/", auth, async (req, res) => {
 router.delete("/", auth, async (req, res) => {
   try {
     const confirm = await Menstruation.deleteOne({ _id: req.body._id });
-    console.log(confirm);
     res.status(204).send("New event created");
   } catch (e) {
     console.error(e);

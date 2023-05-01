@@ -24,7 +24,6 @@ router.post("/", auth, async (req, res) => {
 
 router.delete("/", auth, async (req, res) => {
   let confirm = await removeActivity(req.body.id);
-  console.log(confirm, req.body);
   res.status(200).send(confirm);
 });
 
